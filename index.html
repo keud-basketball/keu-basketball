@@ -915,6 +915,44 @@
     let lineup = [];
     let demoSessionIdentifier = '';
 
+    const menuMusic = new Audio('assets/audio/keu_basketball_menu_loop.wav');
+    const inGameMusic = new Audio('assets/audio/KEU_LARO_NA_INTENSE_INGAME.wav');
+    let activeMusic = null;
+
+    menuMusic.loop = true;
+    menuMusic.volume = 0.35;
+    inGameMusic.loop = true;
+    inGameMusic.volume = 0.4;
+    menuMusic.preload = 'auto';
+    inGameMusic.preload = 'auto';
+
+    function stopMusic(track) {
+      track.pause();
+      track.currentTime = 0;
+    }
+
+    function playMusic(track) {
+      if (activeMusic !== track) {
+        stopMusic(menuMusic);
+        stopMusic(inGameMusic);
+        activeMusic = track;
+      }
+
+      track.play().catch(() => undefined);
+    }
+
+    function playMenuMusic() {
+      playMusic(menuMusic);
+    }
+
+    function startBasketballMatch() {
+      playMusic(inGameMusic);
+    }
+
+    function endBasketballMatch() {
+      playMenuMusic();
+    }
+
     const loginForm = document.getElementById('loginForm');
     const loginIdentifier = document.getElementById('loginIdentifier');
     const loginPassword = document.getElementById('loginPassword');
@@ -932,6 +970,7 @@
       demoSessionIdentifier = identifier.trim();
       profileIdentifier.textContent = demoSessionIdentifier;
       document.body.classList.add('authenticated');
+      playMenuMusic();
       loginForm.reset();
       loginPassword.type = 'password';
       showPasswordButton.textContent = 'SHOW';
@@ -940,6 +979,9 @@
 
     function leaveDemoSession() {
       demoSessionIdentifier = '';
+      stopMusic(menuMusic);
+      stopMusic(inGameMusic);
+      activeMusic = null;
       profilePanel.classList.remove('visible');
       document.body.classList.remove('authenticated');
       loginForm.reset();
@@ -1319,6 +1361,8 @@
 
       document.getElementById("opponentBtn").textContent =
         "✅ OPPONENT FOUND!";
+
+      startBasketballMatch();
     }
   </script>
 

@@ -3,7 +3,9 @@ const path = require('node:path');
 
 const projectRoot = path.resolve(__dirname, '..');
 const webDirectory = path.join(projectRoot, 'www');
+const audioDirectory = path.join(projectRoot, 'assets', 'audio');
 
 fs.rmSync(webDirectory, { recursive: true, force: true });
 fs.mkdirSync(webDirectory, { recursive: true });
 fs.copyFileSync(path.join(projectRoot, 'index.html'), path.join(webDirectory, 'index.html'));
+fs.cpSync(audioDirectory, path.join(webDirectory, 'assets', 'audio'), { recursive: true });
