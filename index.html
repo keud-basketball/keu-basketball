@@ -230,7 +230,8 @@
     }
 
     .game {
-      max-width: 600px;
+      width: 100%;
+      max-width: none;
       min-height: 100vh;
       margin: auto;
       padding: 20px;
@@ -328,7 +329,6 @@
     .vs-arena {
       display: none;
       width: 100%;
-      max-width: 1200px;
       margin: 14px auto 0;
       padding: 12px;
       background: linear-gradient(180deg, rgba(17, 23, 34, 0.98), rgba(9, 12, 18, 0.98));
@@ -519,16 +519,33 @@
       text-align: center;
     }
 
-    @media (max-width: 420px) {
-      .vs-teams,
-      .vs-lineups {
-        grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr);
-        gap: 5px;
-      }
+    body.authenticated .mode-menu,
+    body.authenticated .vs-arena {
+      width: 100%;
+    }
 
-      .vs-team-card {
-        padding: 7px;
-      }
+    body.vs-mode .vs-teams,
+    body.vs-mode .vs-lineups {
+      grid-template-columns: minmax(0, 1fr) 70px minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    body.vs-mode .vs-team-card.player1,
+    body.vs-mode #vsPlayer1Lineup {
+      grid-column: 1;
+    }
+
+    body.vs-mode .vs-team-card.opponent,
+    body.vs-mode #vsOpponentLineup {
+      grid-column: 3;
+    }
+
+    body.vs-mode .vs-teams > .vs-mark,
+    body.vs-mode .vs-lineups > .vs-mark {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: center;
+      justify-self: center;
     }
 
     .roulette-title {
