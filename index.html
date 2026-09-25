@@ -549,6 +549,182 @@
     }
 
     @media (orientation: landscape) {
+      body.authenticated .game {
+        padding: 6px 10px;
+      }
+
+      body.authenticated .app-bar {
+        gap: 6px;
+        margin-bottom: 6px;
+      }
+
+      body.authenticated .app-bar button {
+        min-height: 32px;
+        padding: 6px 8px;
+        font-size: 10px;
+      }
+
+      body.authenticated .logo {
+        margin-top: 2px;
+        font-size: 20px;
+      }
+
+      body.authenticated .subtitle {
+        margin-top: 2px;
+        font-size: 10px;
+      }
+
+      body.authenticated .mode-menu {
+        margin-top: 6px;
+        padding: 6px;
+        border-radius: 10px;
+      }
+
+      body.authenticated .mode-header {
+        margin-bottom: 6px;
+        font-size: 12px;
+      }
+
+      body.authenticated .mode-grid {
+        gap: 5px;
+      }
+
+      body.authenticated .mode-btn {
+        min-height: 38px;
+        padding: 7px 6px;
+        border-radius: 8px;
+        font-size: 11px;
+      }
+
+      body.authenticated .mode-status {
+        margin-top: 6px;
+        padding: 6px;
+        font-size: 10px;
+      }
+
+      body.authenticated .roulette-panel {
+        margin-top: 6px;
+        padding: 6px;
+        border-radius: 8px;
+      }
+
+      body.authenticated .roulette-title {
+        font-size: 12px;
+      }
+
+      body.authenticated .roulette-team {
+        min-height: 32px;
+        margin-top: 5px;
+        padding: 7px;
+        font-size: 12px;
+      }
+
+      body.authenticated .spin-team,
+      body.authenticated .next-spin {
+        min-height: 34px;
+        margin-top: 5px;
+        padding: 7px;
+        font-size: 10px;
+      }
+
+      body.authenticated .roster-preview {
+        margin-top: 5px;
+        font-size: 10px;
+      }
+
+      body.authenticated .team-roster {
+        margin-top: 7px;
+      }
+
+      body.authenticated .team-roster h3 {
+        margin-bottom: 5px;
+        font-size: 12px;
+      }
+
+      body.authenticated .roster-list {
+        gap: 4px;
+      }
+
+      body.authenticated .roster-player {
+        gap: 5px;
+        padding: 5px;
+        font-size: 11px;
+      }
+
+      body.authenticated .roster-player-position {
+        margin-top: 1px;
+        font-size: 10px;
+      }
+
+      body.authenticated .roster-select {
+        min-height: 32px;
+        padding: 6px 7px;
+        font-size: 10px;
+      }
+
+      body.authenticated .roster-actions .roster-select {
+        padding: 5px;
+      }
+
+      body.authenticated .draft-slot {
+        margin-top: 6px;
+        padding: 6px;
+        font-size: 11px;
+      }
+
+      body.authenticated .draft-slot strong {
+        margin-bottom: 2px;
+        font-size: 10px;
+      }
+
+      body.authenticated .all-star-lineup {
+        margin-top: 6px;
+        padding: 6px;
+      }
+
+      body.authenticated .all-star-lineup-players {
+        gap: 4px;
+        margin-top: 4px;
+      }
+
+      body.authenticated .all-star-lineup-player {
+        padding: 5px 3px;
+        font-size: 10px;
+      }
+
+      body.authenticated .all-star-lineup-player small {
+        margin-top: 1px;
+      }
+
+      body.authenticated .team {
+        margin-top: 8px;
+        padding: 8px;
+      }
+
+      body.authenticated .team h2 {
+        font-size: 18px;
+      }
+
+      body.authenticated .league {
+        margin-top: 3px;
+        font-size: 11px;
+      }
+
+      body.authenticated #opponentCard {
+        margin-top: 8px !important;
+        padding: 8px !important;
+      }
+
+      body.authenticated #opponentCard h2 {
+        font-size: 16px;
+      }
+
+      body.authenticated .status {
+        margin-top: 6px;
+        padding: 7px;
+        font-size: 11px;
+      }
+
       body.vs-mode .game {
         padding: 10px;
       }
@@ -565,6 +741,7 @@
       }
 
       body.vs-mode .vs-header {
+        grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1fr);
         gap: 6px;
         margin-bottom: 6px;
       }
@@ -579,6 +756,7 @@
 
       body.vs-mode .vs-teams,
       body.vs-mode .vs-lineups {
+        grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr);
         gap: 6px;
       }
 
@@ -594,6 +772,7 @@
       }
 
       body.vs-mode .vs-spin {
+        min-height: 32px;
         margin-top: 4px;
         padding: 6px 4px;
         font-size: 9px;
@@ -605,6 +784,8 @@
       }
 
       body.vs-mode .vs-roster {
+        max-height: 28vh;
+        overflow-y: auto;
         gap: 3px;
       }
 
@@ -615,6 +796,7 @@
       }
 
       body.vs-mode .vs-player-select {
+        min-height: 30px;
         padding: 4px;
         font-size: 8px;
       }
@@ -633,6 +815,11 @@
 
       body.vs-mode .vs-lineup-slot strong {
         font-size: 8px;
+      }
+
+      body.vs-mode .vs-lineup {
+        max-height: 24vh;
+        overflow-y: auto;
       }
 
       body.vs-mode .vs-status {
@@ -1730,7 +1917,6 @@
     };
 
     function setMode(mode) {
-      const previousMode = activeMode;
       const labels = {
         '1v1': '1v1 • Ready for battle',
         '5v5': '5v5 • Team play selected',
@@ -1741,10 +1927,12 @@
 
       activeMode = mode;
       document.body.classList.toggle('vs-mode', mode === 'all-star');
-      if (mode === 'all-star') {
-        startBasketballMatch();
-      } else if (previousMode === 'all-star') {
-        endBasketballMatch();
+      if (document.body.classList.contains('authenticated')) {
+        if (mode === 'rankings') {
+          endBasketballMatch();
+        } else {
+          startBasketballMatch();
+        }
       }
       modeButtons.forEach(button => {
         const isActive = button.dataset.mode === mode;
