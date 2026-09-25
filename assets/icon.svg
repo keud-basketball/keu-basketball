@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" rx="192" fill="#111722"/>
+  <circle cx="512" cy="512" r="300" fill="#ffb52e"/>
+  <path d="M212 512h600M512 212c104 80 160 184 160 300s-56 220-160 300M512 212c-104 80-160 184-160 300s56 220 160 300M270 300c88 56 156 128 242 212 86 84 154 156 242 212M754 300c-88 56-156 128-242 212-86 84-154 156-242 212" fill="none" stroke="#111722" stroke-width="32" stroke-linecap="round"/>
+  <text x="512" y="920" fill="#ffb52e" font-family="Arial, sans-serif" font-size="92" font-weight="900" text-anchor="middle">KEU</text>
+</svg>

@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KEU Basketball</title>
+
+  <style>
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: white;
+    }
+
+    body:not(.authenticated) .game,
+    body:not(.authenticated) #opponentCard {
+      display: none;
+    }
+
+    body.authenticated #loginScreen {
+      display: none;
+    }
+
+    .login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px 16px;
+      background: radial-gradient(circle at top, #263247 0, #0d1117 52%);
+    }
+
+    .login-card {
+      width: min(100%, 390px);
+      padding: 28px 20px 22px;
+      background: #171d29;
+      border: 1px solid #343d4d;
+      border-radius: 20px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.32);
+    }
+
+    .login-brand {
+      text-align: center;
+    }
+
+    .login-brand-mark {
+      display: inline-grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: #ffb52e;
+      color: #111;
+      font-size: 30px;
+      box-shadow: 0 10px 24px rgba(255, 181, 46, 0.2);
+    }
+
+    .login-brand h1 {
+      margin: 16px 0 4px;
+      font-size: 30px;
+      letter-spacing: 0.08em;
+    }
+
+    .login-brand p {
+      margin: 0;
+      color: #ffb52e;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+    }
+
+    .login-form {
+      margin-top: 26px;
+    }
+
+    .login-field {
+      display: block;
+      margin-top: 14px;
+      color: #b6bfcc;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .login-field input {
+      display: block;
+      width: 100%;
+      margin-top: 7px;
+      padding: 13px 12px;
+      border: 1px solid #3c4658;
+      border-radius: 10px;
+      background: #111722;
+      color: white;
+      font: inherit;
+      outline: none;
+    }
+
+    .login-field input:focus {
+      border-color: #ffb52e;
+      box-shadow: 0 0 0 3px rgba(255, 181, 46, 0.14);
+    }
+
+    .password-row {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+    }
+
+    .password-row .login-field {
+      flex: 1;
+    }
+
+    .show-password {
+      min-height: 44px;
+      padding: 0 10px;
+      border: 1px solid #3c4658;
+      border-radius: 10px;
+      background: #202735;
+      color: #ffb52e;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .login-primary,
+    .login-secondary,
+    .forgot-password {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 10px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .login-primary {
+      margin-top: 20px;
+      border: 0;
+      background: #ffb52e;
+      color: #111;
+    }
+
+    .login-secondary {
+      margin-top: 10px;
+      border: 1px solid #ffb52e;
+      background: transparent;
+      color: #ffb52e;
+    }
+
+    .forgot-password {
+      min-height: 32px;
+      margin-top: 8px;
+      border: 0;
+      background: transparent;
+      color: #9da7b7;
+      font-size: 12px;
+    }
+
+    .login-message {
+      min-height: 18px;
+      margin: 12px 0 0;
+      color: #ffcf70;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .app-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .app-bar-brand {
+      color: #ffb52e;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    .app-bar-actions {
+      display: flex;
+      gap: 7px;
+    }
+
+    .app-bar button,
+    .profile-panel button {
+      padding: 8px 10px;
+      border: 1px solid #3c4658;
+      border-radius: 8px;
+      background: #111722;
+      color: #ffb52e;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .profile-panel {
+      display: none;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: #202735;
+      border: 1px solid #343d4d;
+      border-radius: 10px;
+      color: #b6bfcc;
+      font-size: 12px;
+    }
+
+    .profile-panel.visible {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    @media (min-width: 601px) {
+      .login-screen {
+        padding: 40px 20px;
+      }
+    }
+
+    .game {
+      max-width: 600px;
+      min-height: 100vh;
+      margin: auto;
+      padding: 20px;
+      background: linear-gradient(180deg, #171d29, #0d1117);
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 27px;
+      font-weight: 900;
+      margin-top: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #9da7b7;
+      margin-top: 5px;
+    }
+
+    .mode-menu {
+      margin-top: 18px;
+      padding: 16px;
+      background: #202735;
+      border: 1px solid #343d4d;
+      border-radius: 16px;
+    }
+
+    .mode-header {
+      margin: 0 0 12px;
+      font-size: 15px;
+      font-weight: 900;
+      color: #ffb52e;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .mode-btn {
+      appearance: none;
+      border: 1px solid #3c4658;
+      border-radius: 12px;
+      background: #111722;
+      color: white;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 14px 10px;
+      min-height: 56px;
+      text-align: center;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+      cursor: pointer;
+    }
+
+    .mode-btn:active {
+      transform: scale(0.98);
+    }
+
+    .mode-btn.active {
+      background: linear-gradient(180deg, #ffb52e, #f39c12);
+      color: #111;
+      border-color: #ffd166;
+      box-shadow: 0 8px 18px rgba(255, 181, 46, 0.18);
+    }
+
+    .mode-status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: #111722;
+      border-radius: 10px;
+      color: #b6bfcc;
+      text-align: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .roulette-panel {
+      display: none;
+      margin-top: 14px;
+      padding: 15px;
+      background: #111722;
+      border: 1px solid #343d4d;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .roulette-panel.visible {
+      display: block;
+    }
+
+    .roulette-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .roulette-team {
+      margin-top: 10px;
+      padding: 12px;
+      min-height: 44px;
+      border-radius: 9px;
+      background: #202735;
+      color: #ffb52e;
+      font-weight: 900;
+    }
+
+    .roulette-team.spinning {
+      animation: roulettePulse 0.18s ease-in-out infinite alternate;
+    }
+
+    @keyframes roulettePulse {
+      from {
+        opacity: 0.55;
+        transform: scale(0.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .spin-team {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border: 0;
+      border-radius: 9px;
+      background: #ffb52e;
+      color: #111;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .roster-preview {
+      margin-top: 10px;
+      color: #9da7b7;
+      font-size: 12px;
+    }
+
+    .team-roster {
+      display: none;
+      margin-top: 14px;
+      text-align: left;
+    }
+
+    .team-roster.visible {
+      display: block;
+    }
+
+    .team-roster h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .roster-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .roster-player {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px;
+      background: #202735;
+      border: 1px solid #343d4d;
+      border-radius: 9px;
+    }
+
+    .roster-player-name {
+      font-weight: 800;
+    }
+
+    .roster-player-position {
+      display: block;
+      margin-top: 3px;
+      color: #ffb52e;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .roster-select {
+      flex: 0 0 auto;
+      padding: 9px 10px;
+      border: 0;
+      border-radius: 8px;
+      background: #ffb52e;
+      color: #111;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .roster-select:disabled {
+      background: #555d6b;
+      color: #ddd;
+    }
+
+    .draft-slot {
+      margin-top: 12px;
+      padding: 11px;
+      border: 1px dashed #ffb52e;
+      border-radius: 9px;
+      color: #b6bfcc;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .draft-slot strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #ffb52e;
+      font-size: 11px;
+    }
+
+    .all-star-lineup {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 9px;
+      background: #202735;
+    }
+
+    .all-star-lineup-title {
+      color: #ffb52e;
+      font-size: 11px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .all-star-lineup-players {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .all-star-lineup-player {
+      padding: 8px 5px;
+      border-radius: 7px;
+      background: #111722;
+      color: white;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .all-star-lineup-player small {
+      display: block;
+      margin-top: 3px;
+      color: #9da7b7;
+    }
+
+    .next-spin {
+      display: none;
+      width: 100%;
+      margin-top: 10px;
+      padding: 11px;
+      border: 1px solid #ffb52e;
+      border-radius: 9px;
+      background: transparent;
+      color: #ffb52e;
+      font-weight: 900;
+    }
+
+    .next-spin.visible {
+      display: block;
+    }
+
+    .roster-unavailable {
+      padding: 11px;
+      border-radius: 9px;
+      background: #202735;
+      color: #9da7b7;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .team {
+      margin-top: 22px;
+      padding: 18px;
+      text-align: center;
+      background: #202735;
+      border: 1px solid #343d4d;
+      border-radius: 16px;
+    }
+
+    .team h2 {
+      margin: 0;
+      font-size: 23px;
+    }
+
+    .league {
+      margin-top: 7px;
+      color: #ffb52e;
+      font-weight: bold;
+    }
+
+    .lineup {
+      margin-top: 18px;
+      padding: 15px;
+      background: #202735;
+      border: 1px solid #343d4d;
+      border-radius: 16px;
+    }
+
+    .lineup-title {
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .slots {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+
+    .slot {
+      background: #111722;
+      border-radius: 8px;
+      padding: 8px 3px;
+      text-align: center;
+      min-height: 52px;
+      font-size: 10px;
+      color: #9da7b7;
+    }
+
+    .slot strong {
+      display: block;
+      color: #ffb52e;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .slot.filled {
+      color: white;
+    }
+
+    .title {
+      margin: 22px 0 10px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .players {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .player {
+      padding: 14px;
+      background: #202735;
+      border: 2px solid #343d4d;
+      border-radius: 14px;
+    }
+
+    .player.selected {
+      border-color: #ffb52e;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .name {
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .pos {
+      color: #ffb52e;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+      margin-top: 10px;
+    }
+
+    .stat {
+      background: #111722;
+      border-radius: 7px;
+      padding: 7px 2px;
+      text-align: center;
+      color: #9da7b7;
+      font-size: 10px;
+    }
+
+    .stat strong {
+      display: block;
+      color: white;
+      font-size: 14px;
+    }
+
+    .select {
+      width: 100%;
+      margin-top: 10px;
+      padding: 11px;
+      border: 0;
+      border-radius: 9px;
+      background: #ffb52e;
+      color: #111;
+      font-weight: 900;
+    }
+
+    .select:disabled {
+      background: #555d6b;
+      color: #ddd;
+    }
+
+    .status {
+      margin-top: 16px;
+      padding: 14px;
+      text-align: center;
+      background: #171d29;
+      border-radius: 12px;
+      color: #b6bfcc;
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="login-screen" id="loginScreen" aria-labelledby="loginTitle">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="login-brand-mark" aria-hidden="true">🏀</div>
+        <h1 id="loginTitle">KEU</h1>
+        <p>HOOPS OF THE LEGENDS</p>
+      </div>
+
+      <form class="login-form" id="loginForm">
+        <label class="login-field" for="loginIdentifier">
+          Username or Email
+          <input id="loginIdentifier" name="identifier" type="text" autocomplete="username" required>
+        </label>
+
+        <div class="password-row">
+          <label class="login-field" for="loginPassword">
+            Password
+            <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+          </label>
+          <button class="show-password" type="button" id="showPasswordButton">SHOW</button>
+        </div>
+
+        <button class="login-primary" type="submit">LOGIN</button>
+        <button class="login-secondary" type="button" id="createAccountButton">CREATE ACCOUNT</button>
+        <button class="forgot-password" type="button" id="forgotPasswordButton">Forgot Password?</button>
+        <p class="login-message" id="loginMessage" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="game">
+
+    <div class="app-bar">
+      <div class="app-bar-brand">KEU • HOOPS OF THE LEGENDS</div>
+      <div class="app-bar-actions">
+        <button type="button" id="profileButton">PROFILE</button>
+        <button type="button" id="logoutButton">LOGOUT</button>
+      </div>
+    </div>
+
+    <div class="profile-panel" id="profilePanel">
+      <span>LOCAL DEMO PROFILE: <strong id="profileIdentifier"></strong></span>
+      <button type="button" id="closeProfileButton">CLOSE</button>
+    </div>
+
+    <div class="logo">🏀 KEU</div>
+
+    <div class="subtitle">
+      HOOPS OF THE LEGENDS
+    </div>
+
+    <div class="mode-menu">
+      <div class="mode-header">🎮 MAIN MENU</div>
+      <div class="mode-grid">
+        <button type="button" class="mode-btn active" data-mode="1v1">🏀 1v1</button>
+        <button type="button" class="mode-btn" data-mode="5v5">🏀 5v5</button>
+        <button type="button" class="mode-btn" data-mode="3-point">🎯 3-POINT SHOOTING</button>
+        <button type="button" class="mode-btn" data-mode="all-star">⭐ ALL-STAR GAMES</button>
+        <button type="button" class="mode-btn" data-mode="rankings">🏆 PLAYER RANKINGS</button>
+      </div>
+      <div class="mode-status" id="modeStatus">Selected mode: 1v1 • Ready for battle</div>
+      <div class="roulette-panel" id="roulettePanel">
+        <h2 class="roulette-title">🎲 TEAM ROULETTE</h2>
+        <div class="roulette-team" id="rouletteTeam">Spin to choose a team</div>
+        <button type="button" class="spin-team" id="spinTeamBtn">SPIN TEAM</button>
+        <div class="roster-preview" id="rosterPreview">Selected team roster will appear here.</div>
+        <div class="team-roster" id="teamRoster">
+          <h3 id="rosterTitle">TEAM ROSTER</h3>
+          <div class="roster-list" id="rosterPlayers"></div>
+          <div class="draft-slot" id="draftSlot">
+            <strong>DRAFT SLOT</strong>
+            No player selected
+          </div>
+          <div class="all-star-lineup">
+            <div class="all-star-lineup-title">⭐ ALL-STAR LINEUP</div>
+            <div class="all-star-lineup-players" id="allStarLineupPlayers"></div>
+          </div>
+          <button type="button" class="next-spin" id="nextSpinBtn">NEXT SPIN</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="team">
+      <h2>Converge FiberXers</h2>
+      <div class="league">🇵🇭 PBA TEAM</div>
+    </div>
+
+    <div class="lineup">
+
+      <div class="lineup-title">
+        👥 YOUR 5-MAN LINEUP
+      </div>
+
+      <div class="slots">
+
+        <div class="slot" id="slot-PG">
+          <strong>PG</strong>
+          —
+        </div>
+
+        <div class="slot" id="slot-SG">
+          <strong>SG</strong>
+          —
+        </div>
+
+        <div class="slot" id="slot-SF">
+          <strong>SF</strong>
+          —
+        </div>
+
+        <div class="slot" id="slot-PF">
+          <strong>PF</strong>
+          —
+        </div>
+
+        <div class="slot" id="slot-C">
+          <strong>C</strong>
+          —
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="title">
+      👤 CHOOSE YOUR PLAYER
+    </div>
+
+    <div class="players">
+
+      <div class="player" data-name="Calvin Abueva">
+        <div class="top">
+          <div class="name">Calvin Abueva</div>
+          <div class="pos">F</div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><strong>—</strong>OVR</div>
+          <div class="stat"><strong>10.7</strong>PTS</div>
+          <div class="stat"><strong>9.0</strong>REB</div>
+          <div class="stat"><strong>2.9</strong>AST</div>
+        </div>
+
+        <button class="select" onclick="selectPlayer(this,'Calvin Abueva','PF')">
+          SELECT PLAYER
+        </button>
+      </div>
+
+
+      <div class="player" data-name="Justin Arana">
+        <div class="top">
+          <div class="name">Justin Arana</div>
+          <div class="pos">F</div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><strong>—</strong>OVR</div>
+          <div class="stat"><strong>21.8</strong>PTS</div>
+          <div class="stat"><strong>8.3</strong>REB</div>
+          <div class="stat"><strong>2.6</strong>AST</div>
+        </div>
+
+        <button class="select" onclick="selectPlayer(this,'Justin Arana','SF')">
+          SELECT PLAYER
+        </button>
+      </div>
+
+
+      <div class="player" data-name="Justine Baltazar">
+        <div class="top">
+          <div class="name">Justine Baltazar</div>
+          <div class="pos">C</div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><strong>—</strong>OVR</div>
+          <div class="stat"><strong>14.1</strong>PTS</div>
+          <div class="stat"><strong>8.3</strong>REB</div>
+          <div class="stat"><strong>2.2</strong>AST</div>
+        </div>
+
+        <button class="select" onclick="selectPlayer(this,'Justine Baltazar','C')">
+          SELECT PLAYER
+        </button>
+      </div>
+
+
+      <div class="player" data-name="Christopher Banchero">
+        <div class="top">
+          <div class="name">Christopher Banchero</div>
+          <div class="pos">PG</div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><strong>—</strong>OVR</div>
+          <div class="stat"><strong>29.5</strong>PTS</div>
+          <div class="stat"><strong>8.5</strong>REB</div>
+          <div class="stat"><strong>1.0</strong>AST</div>
+        </div>
+
+        <button class="select" onclick="selectPlayer(this,'Christopher Banchero','PG')">
+          SELECT PLAYER
+        </button>
+      </div>
+
+
+      <div class="player" data-name="Juan Gomez de Liaño">
+        <div class="top">
+          <div class="name">Juan Gomez de Liaño</div>
+          <div class="pos">G</div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><strong>—</strong>OVR</div>
+          <div class="stat"><strong>—</strong>PTS</div>
+          <div class="stat"><strong>—</strong>REB</div>
+          <div class="stat"><strong>—</strong>AST</div>
+        </div>
+
+        <button class="select" onclick="selectPlayer(this,'Juan Gomez de Liaño','SG')">
+          SELECT PLAYER
+        </button>
+      </div>
+
+    </div>
+
+    <div class="status" id="status">
+      0 / 5 players selected
+    </div>
+
+  </div>
+  <div class="card" id="opponentCard" style="margin-top:20px;text-align:center;">
+
+    <h2>⚔️ OPPONENT</h2>
+
+    <p style="color:#9da7b7;">
+      Find your opponent
+    </p>
+
+    <div id="opponentTeam" style="margin-top:15px;padding:15px;background:#111722;border-radius:12px;">
+      🎲 RANDOM OPPONENT
+    </div>
+
+    <button id="opponentBtn"
+    onclick="findOpponent()"
+      style="margin-top:15px;width:100%;padding:12px;border:0;border-radius:9px;background:#ffb52e;font-weight:900;">
+      FIND OPPONENT
+    </button>
+
+  </div>
+  <script>
+
+    let lineup = [];
+    let demoSessionIdentifier = '';
+
+    const loginForm = document.getElementById('loginForm');
+    const loginIdentifier = document.getElementById('loginIdentifier');
+    const loginPassword = document.getElementById('loginPassword');
+    const loginMessage = document.getElementById('loginMessage');
+    const showPasswordButton = document.getElementById('showPasswordButton');
+    const createAccountButton = document.getElementById('createAccountButton');
+    const forgotPasswordButton = document.getElementById('forgotPasswordButton');
+    const profileButton = document.getElementById('profileButton');
+    const logoutButton = document.getElementById('logoutButton');
+    const profilePanel = document.getElementById('profilePanel');
+    const profileIdentifier = document.getElementById('profileIdentifier');
+    const closeProfileButton = document.getElementById('closeProfileButton');
+
+    function enterDemoSession(identifier) {
+      demoSessionIdentifier = identifier.trim();
+      profileIdentifier.textContent = demoSessionIdentifier;
+      document.body.classList.add('authenticated');
+      loginForm.reset();
+      loginPassword.type = 'password';
+      showPasswordButton.textContent = 'SHOW';
+      loginMessage.textContent = '';
+    }
+
+    function leaveDemoSession() {
+      demoSessionIdentifier = '';
+      profilePanel.classList.remove('visible');
+      document.body.classList.remove('authenticated');
+      loginForm.reset();
+      loginPassword.type = 'password';
+      showPasswordButton.textContent = 'SHOW';
+      loginMessage.textContent = 'You have been logged out.';
+      loginIdentifier.focus();
+    }
+
+    function validateDemoCredentials() {
+      const identifier = loginIdentifier.value.trim();
+      const passwordProvided = loginPassword.value.length > 0;
+
+      if (!identifier || !passwordProvided) {
+        loginMessage.textContent = 'Enter a username or email and a password to continue.';
+        return null;
+      }
+
+      return identifier;
+    }
+
+    loginForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const identifier = validateDemoCredentials();
+
+      if (identifier) {
+        enterDemoSession(identifier);
+      }
+    });
+
+    createAccountButton.addEventListener('click', () => {
+      const identifier = validateDemoCredentials();
+
+      if (identifier) {
+        enterDemoSession(identifier);
+      }
+    });
+
+    showPasswordButton.addEventListener('click', () => {
+      const isHidden = loginPassword.type === 'password';
+      loginPassword.type = isHidden ? 'text' : 'password';
+      showPasswordButton.textContent = isHidden ? 'HIDE' : 'SHOW';
+    });
+
+    forgotPasswordButton.addEventListener('click', () => {
+      loginMessage.textContent = 'Password recovery is not available in local demo mode.';
+    });
+
+    profileButton.addEventListener('click', () => {
+      profilePanel.classList.toggle('visible');
+    });
+
+    closeProfileButton.addEventListener('click', () => {
+      profilePanel.classList.remove('visible');
+    });
+
+    logoutButton.addEventListener('click', leaveDemoSession);
+
+    const modeButtons = document.querySelectorAll('.mode-btn');
+    const modeStatus = document.getElementById('modeStatus');
+    const roulettePanel = document.getElementById('roulettePanel');
+    const rouletteTeam = document.getElementById('rouletteTeam');
+    const rosterPreview = document.getElementById('rosterPreview');
+    const spinTeamButton = document.getElementById('spinTeamBtn');
+    const teamRoster = document.getElementById('teamRoster');
+    const rosterTitle = document.getElementById('rosterTitle');
+    const rosterPlayers = document.getElementById('rosterPlayers');
+    const draftSlot = document.getElementById('draftSlot');
+    const nextSpinButton = document.getElementById('nextSpinBtn');
+    const allStarLineupPlayers = document.getElementById('allStarLineupPlayers');
+    const teamPool = [
+      'Converge FiberXers',
+      'Barangay Ginebra',
+      'San Miguel Beermen',
+      'TNT Tropang Giga',
+      'Magnolia Chicken Timplados',
+      'Meralco Bolts',
+      'NLEX Road Warriors',
+      'Rain or Shine Elasto Painters',
+      'Blackwater Bossing',
+      'Phoenix Fuel Masters',
+      'Terrafirma Dyip',
+      'San Beda',
+      'Letran',
+      'CSB',
+      'JRU',
+      'Mapúa',
+      'Lyceum',
+      'Perpetual',
+      'San Sebastian',
+      'Arellano',
+      'EAC'
+    ];
+    const teamRosterData = {
+      'Converge FiberXers': [
+        { name: 'Calvin Abueva', position: 'PF' },
+        { name: 'Juan Gómez de Liaño', position: 'PG' },
+        { name: 'Archie Concepcion', position: 'SG' },
+        { name: 'Jaydee Tungcab', position: 'SF' },
+        { name: 'John Lloyd Clemente', position: 'SF' }
+      ],
+      'Barangay Ginebra': [
+        { name: 'Troy Rosario', position: 'PF' },
+        { name: 'Jeremiah Gray', position: 'SG' },
+        { name: 'RJ Abarrientos', position: 'PG' },
+        { name: 'Scottie Thompson', position: 'PG' },
+        { name: 'John Pinto', position: 'SG' }
+      ],
+      'San Miguel Beermen': [
+        { name: 'Kris Rosales', position: 'PG' },
+        { name: 'Don Trollano', position: 'SF' },
+        { name: 'Moala Tautuaa', position: 'C' },
+        { name: 'Chris Ross', position: 'PG' },
+        { name: 'June Mar Fajardo', position: 'C' },
+      ],
+      'TNT Tropang Giga': [
+        { name: 'Simon Enciso', position: 'PG' },
+        { name: 'Tyrus Hill', position: 'SF' },
+        { name: 'Joe Celso', position: 'SF' },
+        { name: 'Rey Nambatac', position: 'SG' },
+        { name: 'Poy Erram', position: 'C' }
+      ],
+      'Magnolia Chicken Timplados': [
+        { name: 'Paolo Taha', position: 'PG' },
+        { name: 'KJ Buffen', position: 'SF' },
+        { name: 'Javi Gómez de Liaño', position: 'SF' },
+        { name: 'Paul Lee', position: 'SG' },
+        { name: 'LA Tenorio', position: 'PG' }
+      ],
+      'Meralco Bolts': [
+        { name: 'Aaron Black', position: 'PG' },
+        { name: 'Jason Brickman', position: 'PG' },
+        { name: 'Chris Banchero', position: 'PG' },
+        { name: 'Cliff Hodge', position: 'PF' },
+        { name: 'Antonio Hester', position: 'C' }
+      ],
+      'NLEX Road Warriors': [
+        { name: 'Evan Nelle', position: 'PG' },
+        { name: 'Michael Miranda', position: 'C' },
+        { name: 'Baser Amer', position: 'PG' },
+        { name: 'Lorenz Capulong', position: 'C' },
+        { name: 'Arvin Gamboa', position: 'SF' }
+      ],
+      'Rain or Shine Elasto Painters': [
+        { name: 'Caelan Tiongson', position: 'SF' },
+        { name: 'Adrian Nocum', position: 'PG' },
+        { name: 'Felix Lemetti', position: 'PG' },
+        { name: 'Mike Malonzo', position: 'SF' },
+        { name: 'Anton Asistio', position: 'PG' }
+      ],
+      'Blackwater Bossing': [
+        { name: 'RK Ilagan', position: 'PG' },
+        { name: 'Abu Tratter', position: 'C' },
+        { name: 'Sedrick Barefield', position: 'PG' },
+        { name: 'Michael DiGregorio', position: 'PG' },
+        { name: 'Nick Demusis', position: 'SF' }
+      ],
+      'Phoenix Fuel Masters': [
+        { name: 'Will Gozum', position: 'SF' },
+        { name: 'Kai Ballungay', position: 'C' },
+        { name: 'B. J. Johnson', position: 'SF' },
+        { name: 'Jason Perkins', position: 'PF' },
+        { name: 'Rafi Reavis', position: 'C' }
+      ]
+    };
+
+    let selectedRosterPlayer = null;
+    let draftedPlayers = [];
+    let spunTeams = [];
+    let spinCount = 0;
+
+    function setMode(mode) {
+      const labels = {
+        '1v1': '1v1 • Ready for battle',
+        '5v5': '5v5 • Team play selected',
+        '3-point': '3-POINT SHOOTING • Practice mode',
+        'all-star': 'ALL-STAR GAMES • Showcase mode',
+        'rankings': 'PLAYER RANKINGS • Leaderboard view'
+      };
+
+      modeButtons.forEach(button => {
+        const isActive = button.dataset.mode === mode;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+      });
+
+      modeStatus.textContent = 'Selected mode: ' + (labels[mode] || mode);
+      roulettePanel.classList.toggle('visible', mode === 'all-star');
+    }
+
+    modeButtons.forEach(button => {
+      button.addEventListener('click', () => setMode(button.dataset.mode));
+    });
+
+    function resetRosterDraft() {
+      selectedRosterPlayer = null;
+      rosterPlayers.innerHTML = '';
+      draftSlot.innerHTML = '<strong>DRAFT SLOT</strong>No player selected';
+      nextSpinButton.classList.remove('visible');
+      nextSpinButton.disabled = false;
+      nextSpinButton.textContent = 'NEXT SPIN';
+    }
+
+    function renderAllStarLineup() {
+      allStarLineupPlayers.innerHTML = '';
+      draftedPlayers.forEach((player, index) => {
+        const lineupPlayer = document.createElement('div');
+        lineupPlayer.className = 'all-star-lineup-player';
+        lineupPlayer.innerHTML =
+          'PLAYER ' + (index + 1) + '<br>' + player.name +
+          '<small>' + player.position + '</small>';
+        allStarLineupPlayers.appendChild(lineupPlayer);
+      });
+    }
+
+    function selectRosterPlayer(button, player) {
+      if (selectedRosterPlayer || draftedPlayers.some(draftedPlayer => draftedPlayer.name === player.name)) {
+        return;
+      }
+
+      selectedRosterPlayer = player;
+      draftedPlayers.push(player);
+      rosterPlayers.querySelectorAll('.roster-select').forEach(rosterButton => {
+        rosterButton.disabled = true;
+      });
+      button.textContent = '✓ SELECTED';
+      draftSlot.innerHTML =
+        '<strong>DRAFT SLOT</strong>' + player.name + ' (' + player.position + ')';
+      rosterPreview.textContent = player.name + ' selected. Ready for the next spin.';
+      renderAllStarLineup();
+      if (spinCount >= 2) {
+        nextSpinButton.classList.add('visible');
+        nextSpinButton.disabled = true;
+        nextSpinButton.textContent = 'NEXT SPIN • COMING SOON';
+      } else {
+        nextSpinButton.classList.add('visible');
+        nextSpinButton.disabled = false;
+        nextSpinButton.textContent = 'NEXT SPIN';
+      }
+    }
+
+    function renderTeamRoster(team) {
+      const roster = teamRosterData[team];
+
+      resetRosterDraft();
+      teamRoster.classList.add('visible');
+      rosterTitle.textContent = team + ' ROSTER';
+
+      if (!roster) {
+        rosterPreview.textContent = 'No verified roster data available for this team yet.';
+        rosterPlayers.innerHTML =
+          '<div class="roster-unavailable">Roster data will be added when verified.</div>';
+        return;
+      }
+
+      rosterPreview.textContent = 'Select one player for your draft slot.';
+      roster.forEach(player => {
+        const playerRow = document.createElement('div');
+        playerRow.className = 'roster-player';
+
+        const playerInfo = document.createElement('div');
+        playerInfo.innerHTML =
+          '<span class="roster-player-name">' + player.name + '</span>' +
+          '<span class="roster-player-position">' + player.position + '</span>';
+
+        const playerButton = document.createElement('button');
+        playerButton.type = 'button';
+        playerButton.className = 'roster-select';
+        playerButton.textContent = 'SELECT PLAYER';
+        if (draftedPlayers.some(draftedPlayer => draftedPlayer.name === player.name)) {
+          playerButton.disabled = true;
+          playerButton.textContent = 'ALREADY DRAFTED';
+        }
+        playerButton.addEventListener('click', () => {
+          selectRosterPlayer(playerButton, player);
+        });
+
+        playerRow.append(playerInfo, playerButton);
+        rosterPlayers.appendChild(playerRow);
+      });
+    }
+
+    function startTeamSpin() {
+      if (spinCount >= 2) {
+        return;
+      }
+
+      spinCount += 1;
+      spinTeamButton.disabled = true;
+      spinTeamButton.textContent = 'SPINNING...';
+      rouletteTeam.classList.add('spinning');
+      teamRoster.classList.remove('visible');
+      resetRosterDraft();
+      rosterPreview.textContent = 'Selecting a team...';
+
+      const spinInterval = setInterval(() => {
+        const cyclingTeam = teamPool[Math.floor(Math.random() * teamPool.length)];
+        rouletteTeam.textContent = cyclingTeam;
+      }, 100);
+
+      setTimeout(() => {
+        clearInterval(spinInterval);
+
+        const availableTeams = teamPool.filter(team => !spunTeams.includes(team));
+        const spinPool = availableTeams.length ? availableTeams : teamPool;
+        const selectedTeam = spinPool[Math.floor(Math.random() * spinPool.length)];
+        spunTeams.push(selectedTeam);
+        rouletteTeam.textContent = selectedTeam;
+        rouletteTeam.classList.remove('spinning');
+        renderTeamRoster(selectedTeam);
+        spinTeamButton.disabled = false;
+        spinTeamButton.textContent = 'SPIN TEAM';
+      }, 2000);
+    }
+
+    function startNextTeamSpin() {
+      if (spinCount !== 1 || draftedPlayers.length !== 1 || !selectedRosterPlayer) {
+        return;
+      }
+
+      startTeamSpin();
+    }
+
+    spinTeamButton.addEventListener('click', startTeamSpin);
+    nextSpinButton.addEventListener('click', startNextTeamSpin);
+
+    setMode('1v1');
+
+    function selectPlayer(button, name, position) {
+
+      if (lineup.length >= 5) {
+        return;
+      }
+
+      if (lineup.some(p => p.name === name)) {
+        return;
+      }
+
+      lineup.push({
+        name: name,
+        position: position
+      });
+
+      button.closest(".player").classList.add("selected");
+
+      button.textContent = "✓ SELECTED";
+      button.disabled = true;
+
+      const slot = document.getElementById("slot-" + position);
+
+      if (slot) {
+
+        slot.classList.add("filled");
+
+        slot.innerHTML =
+          "<strong>" + position + "</strong>" + name;
+
+      }
+
+      document.getElementById("status").textContent =
+        lineup.length + " / 5 players selected";
+
+      if (lineup.length === 5) {
+
+        document.getElementById("status").textContent =
+          "🔥 LINEUP COMPLETE! Ready for battle!";
+
+      }
+
+    }
+    function findOpponent() {
+      const opponent =
+        teamPool[Math.floor(Math.random() * teamPool.length)];
+
+      document.getElementById("opponentTeam").textContent =
+        opponent;
+
+      document.getElementById("opponentBtn").textContent =
+        "✅ OPPONENT FOUND!";
+    }
+  </script>
+
+</body>
+
+</html>

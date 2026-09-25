@@ -1,0 +1,20 @@
+{
+  "name": "keu-hoops-of-the-legends",
+  "version": "1.0.0",
+  "private": true,
+  "description": "KEU - Hoops of the Legends Android wrapper",
+  "scripts": {
+    "copy-web": "node scripts/copy-web.js",
+    "android:sync": "npm run copy-web && npx cap sync android",
+    "android:open": "npm run android:sync && npx cap open android",
+    "android:build:debug": "npm run android:sync && cd android && ./gradlew assembleDebug",
+    "check:javascript": "node --check scripts/copy-web.js && node scripts/check-web.js"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3"
+  }
+}

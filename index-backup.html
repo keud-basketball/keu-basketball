@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEU Basketball</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+    font-family:Arial,sans-serif;
+      background:#0d1117;
+        color:white;
+        }
+
+        .game{
+          max-width:600px;
+            min-height:100vh;
+              margin:auto;
+                padding:20px;
+                  background:linear-gradient(180deg,#171d29,#0d1117);
+                  }
+
+                  .logo{
+                    text-align:center;
+                      font-size:27px;
+                        font-weight:900;
+                          margin-top:10px;
+                          }
+
+                          .subtitle{
+                            text-align:center;
+                              color:#9da7b7;
+                                margin-top:5px;
+                                }
+
+                                .team{
+                                  margin-top:22px;
+                                    padding:18px;
+                                      text-align:center;
+                                        background:#202735;
+                                          border:1px solid #343d4d;
+                                            border-radius:16px;
+                                            }
+
+                                            .team h2{
+                                              margin:0;
+                                                font-size:23px;
+                                                }
+
+                                                .league{
+                                                  margin-top:7px;
+                                                    color:#ffb52e;
+                                                      font-weight:bold;
+                                                      }
+
+                                                      .lineup{
+                                                        margin-top:18px;
+                                                          padding:15px;
+                                                            background:#202735;
+                                                              border:1px solid #343d4d;
+                                                                border-radius:16px;
+                                                                }
+
+                                                                .lineup-title{
+                                                                  font-weight:900;
+                                                                    margin-bottom:10px;
+                                                                    }
+
+                                                                    .slots{
+                                                                      display:grid;
+                                                                        grid-template-columns:repeat(5,1fr);
+                                                                          gap:5px;
+                                                                          }
+
+                                                                          .slot{
+                                                                            background:#111722;
+                                                                              border-radius:8px;
+                                                                                padding:8px 3px;
+                                                                                  text-align:center;
+                                                                                    min-height:52px;
+                                                                                      font-size:10px;
+                                                                                        color:#9da7b7;
+                                                                                        }
+
+                                                                                        .slot strong{
+                                                                                          display:block;
+                                                                                            color:#ffb52e;
+                                                                                              font-size:12px;
+                                                                                                margin-bottom:4px;
+                                                                                                }
+
+                                                                                                .slot.filled{
+                                                                                                  color:white;
+                                                                                                  }
+
+                                                                                                  .title{
+                                                                                                    margin:22px 0 10px;
+                                                                                                      font-size:18px;
+                                                                                                        font-weight:900;
+                                                                                                        }
+
+                                                                                                        .players{
+                                                                                                          display:flex;
+                                                                                                            flex-direction:column;
+                                                                                                              gap:10px;
+                                                                                                              }
+
+                                                                                                              .player{
+                                                                                                                padding:14px;
+                                                                                                                  background:#202735;
+                                                                                                                    border:2px solid #343d4d;
+                                                                                                                      border-radius:14px;
+                                                                                                                      }
+
+                                                                                                                      .player.selected{
+                                                                                                                        border-color:#ffb52e;
+                                                                                                                        }
+
+                                                                                                                        .top{
+                                                                                                                          display:flex;
+                                                                                                                            justify-content:space-between;
+                                                                                                                              align-items:center;
+                                                                                                                              }
+
+                                                                                                                              .name{
+                                                                                                                                font-size:17px;
+                                                                                                                                  font-weight:900;
+                                                                                                                                  }
+
+                                                                                                                                  .pos{
+                                                                                                                                    color:#ffb52e;
+                                                                                                                                      font-size:13px;
+                                                                                                                                        font-weight:bold;
+                                                                                                                                        }
+
+                                                                                                                                        .stats{
+                                                                                                                                          display:grid;
+                                                                                                                                            grid-template-columns:repeat(4,1fr);
+                                                                                                                                              gap:5px;
+                                                                                                                                                margin-top:10px;
+                                                                                                                                                }
+
+                                                                                                                                                .stat{
+                                                                                                                                                  background:#111722;
+                                                                                                                                                    border-radius:7px;
+                                                                                                                                                      padding:7px 2px;
+                                                                                                                                                        text-align:center;
+                                                                                                                                                          color:#9da7b7;
+                                                                                                                                                            font-size:10px;
+                                                                                                                                                            }
+
+                                                                                                                                                            .stat strong{
+                                                                                                                                                              display:block;
+                                                                                                                                                                color:white;
+                                                                                                                                                                  font-size:14px;
+                                                                                                                                                                  }
+
+                                                                                                                                                                  .select{
+                                                                                                                                                                    width:100%;
+                                                                                                                                                                      margin-top:10px;
+                                                                                                                                                                        padding:11px;
+                                                                                                                                                                          border:0;
+                                                                                                                                                                            border-radius:9px;
+                                                                                                                                                                              background:#ffb52e;
+                                                                                                                                                                                color:#111;
+                                                                                                                                                                                  font-weight:900;
+                                                                                                                                                                                  }
+
+                                                                                                                                                                                  .select:disabled{
+                                                                                                                                                                                    background:#555d6b;
+                                                                                                                                                                                      color:#ddd;
+                                                                                                                                                                                      }
+
+                                                                                                                                                                                      .status{
+                                                                                                                                                                                        margin-top:16px;
+                                                                                                                                                                                          padding:14px;
+                                                                                                                                                                                            text-align:center;
+                                                                                                                                                                                              background:#171d29;
+                                                                                                                                                                                                border-radius:12px;
+                                                                                                                                                                                                  color:#b6bfcc;
+                                                                                                                                                                                                  }
+                                                                                                                                                                                                  </style>
+                                                                                                                                                                                                  </head>
+
+                                                                                                                                                                                                  <body>
+
+                                                                                                                                                                                                  <div class="game">
+
+                                                                                                                                                                                                  <div class="logo">🏀 KEU BASKETBALL</div>
+
+                                                                                                                                                                                                  <div class="subtitle">
+                                                                                                                                                                                                  PBA × NCAA • ROULETTE WARS
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="team">
+                                                                                                                                                                                                  <h2>Converge FiberXers</h2>
+                                                                                                                                                                                                  <div class="league">🇵🇭 PBA TEAM</div>
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="lineup">
+
+                                                                                                                                                                                                  <div class="lineup-title">
+                                                                                                                                                                                                  👥 YOUR 5-MAN LINEUP
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="slots">
+
+                                                                                                                                                                                                  <div class="slot" id="slot-PG">
+                                                                                                                                                                                                  <strong>PG</strong>
+                                                                                                                                                                                                  —
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="slot" id="slot-SG">
+                                                                                                                                                                                                  <strong>SG</strong>
+                                                                                                                                                                                                  —
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="slot" id="slot-SF">
+                                                                                                                                                                                                  <strong>SF</strong>
+                                                                                                                                                                                                  —
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="slot" id="slot-PF">
+                                                                                                                                                                                                  <strong>PF</strong>
+                                                                                                                                                                                                  —
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="slot" id="slot-C">
+                                                                                                                                                                                                  <strong>C</strong>
+                                                                                                                                                                                                  —
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="title">
+                                                                                                                                                                                                  👤 CHOOSE YOUR PLAYER
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="players">
+
+                                                                                                                                                                                                  <div class="player" data-name="Calvin Abueva">
+                                                                                                                                                                                                  <div class="top">
+                                                                                                                                                                                                  <div class="name">Calvin Abueva</div>
+                                                                                                                                                                                                  <div class="pos">F</div>
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="stats">
+                                                                                                                                                                                                  <div class="stat"><strong>—</strong>OVR</div>
+                                                                                                                                                                                                  <div class="stat"><strong>10.7</strong>PTS</div>
+                                                                                                                                                                                                  <div class="stat"><strong>9.0</strong>REB</div>
+                                                                                                                                                                                                  <div class="stat"><strong>2.9</strong>AST</div>
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <button class="select" onclick="selectPlayer(this,'Calvin Abueva','PF')">
+                                                                                                                                                                                                  SELECT PLAYER
+                                                                                                                                                                                                  </button>
+                                                                                                                                                                                                  </div>
+
+
+                                                                                                                                                                                                  <div class="player" data-name="Justin Arana">
+                                                                                                                                                                                                  <div class="top">
+                                                                                                                                                                                                  <div class="name">Justin Arana</div>
+                                                                                                                                                                                                  <div class="pos">F</div>
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="stats">
+                                                                                                                                                                                                  <div class="stat"><strong>—</strong>OVR</div>
+                                                                                                                                                                                                  <div class="stat"><strong>21.8</strong>PTS</div>
+                                                                                                                                                                                                  <div class="stat"><strong>8.3</strong>REB</div>
+                                                                                                                                                                                                  <div class="stat"><strong>2.6</strong>AST</div>
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <button class="select" onclick="selectPlayer(this,'Justin Arana','SF')">
+                                                                                                                                                                                                  SELECT PLAYER
+                                                                                                                                                                                                  </button>
+                                                                                                                                                                                                  </div>
+
+
+                                                                                                                                                                                                  <div class="player" data-name="Justine Baltazar">
+                                                                                                                                                                                                  <div class="top">
+                                                                                                                                                                                                  <div class="name">Justine Baltazar</div>
+                                                                                                                                                                                                  <div class="pos">C</div>
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="stats">
+                                                                                                                                                                                                  <div class="stat"><strong>—</strong>OVR</div>
+                                                                                                                                                                                                  <div class="stat"><strong>14.1</strong>PTS</div>
+                                                                                                                                                                                                  <div class="stat"><strong>8.3</strong>REB</div>
+                                                                                                                                                                                                  <div class="stat"><strong>2.2</strong>AST</div>
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <button class="select" onclick="selectPlayer(this,'Justine Baltazar','C')">
+                                                                                                                                                                                                  SELECT PLAYER
+                                                                                                                                                                                                  </button>
+                                                                                                                                                                                                  </div>
+
+
+                                                                                                                                                                                                  <div class="player" data-name="Christopher Banchero">
+                                                                                                                                                                                                  <div class="top">
+                                                                                                                                                                                                  <div class="name">Christopher Banchero</div>
+                                                                                                                                                                                                  <div class="pos">PG</div>
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="stats">
+                                                                                                                                                                                                  <div class="stat"><strong>—</strong>OVR</div>
+                                                                                                                                                                                                  <div class="stat"><strong>29.5</strong>PTS</div>
+                                                                                                                                                                                                  <div class="stat"><strong>8.5</strong>REB</div>
+                                                                                                                                                                                                  <div class="stat"><strong>1.0</strong>AST</div>
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <button class="select" onclick="selectPlayer(this,'Christopher Banchero','PG')">
+                                                                                                                                                                                                  SELECT PLAYER
+                                                                                                                                                                                                  </button>
+                                                                                                                                                                                                  </div>
+
+
+                                                                                                                                                                                                  <div class="player" data-name="Juan Gomez de Liaño">
+                                                                                                                                                                                                  <div class="top">
+                                                                                                                                                                                                  <div class="name">Juan Gomez de Liaño</div>
+                                                                                                                                                                                                  <div class="pos">G</div>
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="stats">
+                                                                                                                                                                                                  <div class="stat"><strong>—</strong>OVR</div>
+                                                                                                                                                                                                  <div class="stat"><strong>—</strong>PTS</div>
+                                                                                                                                                                                                  <div class="stat"><strong>—</strong>REB</div>
+                                                                                                                                                                                                  <div class="stat"><strong>—</strong>AST</div>
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <button class="select" onclick="selectPlayer(this,'Juan Gomez de Liaño','SG')">
+                                                                                                                                                                                                  SELECT PLAYER
+                                                                                                                                                                                                  </button>
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <div class="status" id="status">
+                                                                                                                                                                                                  0 / 5 players selected
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                  <script>
+
+                                                                                                                                                                                                  let lineup=[];
+
+                                                                                                                                                                                                  function selectPlayer(button,name,position){
+
+                                                                                                                                                                                                  if(lineup.length>=5){
+                                                                                                                                                                                                  return;
+                                                                                                                                                                                                  }
+
+                                                                                                                                                                                                  if(lineup.some(p=>p.name===name)){
+                                                                                                                                                                                                  return;
+                                                                                                                                                                                                  }
+
+                                                                                                                                                                                                  lineup.push({
+                                                                                                                                                                                                  name:name,
+                                                                                                                                                                                                  position:position
+                                                                                                                                                                                                  });
+
+                                                                                                                                                                                                  button.closest(".player").classList.add("selected");
+
+                                                                                                                                                                                                  button.textContent="✓ SELECTED";
+                                                                                                                                                                                                  button.disabled=true;
+
+                                                                                                                                                                                                  const slot=document.getElementById("slot-"+position);
+
+                                                                                                                                                                                                  if(slot){
+
+                                                                                                                                                                                                  slot.classList.add("filled");
+
+                                                                                                                                                                                                  slot.innerHTML=
+                                                                                                                                                                                                  "<strong>"+position+"</strong>"+name;
+
+                                                                                                                                                                                                  }
+
+                                                                                                                                                                                                  document.getElementById("status").textContent=
+                                                                                                                                                                                                  lineup.length+" / 5 players selected";
+
+                                                                                                                                                                                                  if(lineup.length===5){
+
+                                                                                                                                                                                                  document.getElementById("status").textContent=
+                                                                                                                                                                                                  "🔥 LINEUP COMPLETE! Ready for battle!";
+
+                                                                                                                                                                                                  }
+
+                                                                                                                                                                                                  }
+
+                                                                                                                                                                                                  </script>
+
+                                                                                                                                                                                                  </body>
+                                                                                                                                                                                                  </html>
+                                                                                                                                                                                                  
