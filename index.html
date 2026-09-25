@@ -27,6 +27,11 @@
       display: none;
     }
 
+    body.vs-mode .team,
+    body.vs-mode #opponentCard {
+      display: none;
+    }
+
     .login-screen {
       display: flex;
       align-items: center;
@@ -318,6 +323,191 @@
 
     .roulette-panel.visible {
       display: block;
+    }
+
+    .vs-arena {
+      display: none;
+      margin-top: 14px;
+    }
+
+    .roulette-panel.vs-active .vs-arena {
+      display: block;
+    }
+
+    .roulette-panel.vs-active > :not(.vs-arena) {
+      display: none;
+    }
+
+    .vs-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr);
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .vs-side-label {
+      color: #b6bfcc;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    .vs-mark {
+      color: #ffb52e;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .vs-teams {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr);
+      gap: 8px;
+      align-items: start;
+    }
+
+    .vs-team-card {
+      min-width: 0;
+      padding: 10px;
+      background: #111722;
+      border: 1px solid #343d4d;
+      border-radius: 10px;
+    }
+
+    .vs-team-name {
+      min-height: 38px;
+      display: grid;
+      place-items: center;
+      padding: 5px;
+      color: #ffb52e;
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .vs-team-name.spinning {
+      animation: roulettePulse 0.18s ease-in-out infinite alternate;
+    }
+
+    .vs-spin {
+      width: 100%;
+      margin-top: 8px;
+      padding: 9px 5px;
+      border: 0;
+      border-radius: 8px;
+      background: #ffb52e;
+      color: #111;
+      font-size: 10px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .vs-spin:disabled,
+    .vs-player-select:disabled {
+      background: #555d6b;
+      color: #ddd;
+      cursor: default;
+    }
+
+    .vs-position {
+      margin: 10px 0 7px;
+      color: #b6bfcc;
+      font-size: 10px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .vs-roster {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .vs-player {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      padding: 6px;
+      border-radius: 7px;
+      background: #202735;
+      font-size: 10px;
+    }
+
+    .vs-player-name {
+      min-width: 0;
+      overflow: hidden;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .vs-player-select {
+      flex: 0 0 auto;
+      padding: 6px 5px;
+      border: 0;
+      border-radius: 6px;
+      background: #ffb52e;
+      color: #111;
+      font-size: 9px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .vs-lineups {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+      align-items: start;
+    }
+
+    .vs-lineup {
+      display: grid;
+      gap: 4px;
+    }
+
+    .vs-lineup-slot {
+      display: grid;
+      grid-template-columns: 20px minmax(0, 1fr);
+      gap: 4px;
+      align-items: center;
+      min-height: 27px;
+      padding: 4px;
+      border-radius: 6px;
+      background: #202735;
+      color: #9da7b7;
+      font-size: 9px;
+    }
+
+    .vs-lineup-slot strong {
+      color: #ffb52e;
+      font-size: 9px;
+    }
+
+    .vs-lineup-slot.filled {
+      color: white;
+    }
+
+    .vs-status {
+      min-height: 27px;
+      margin-top: 8px;
+      color: #9da7b7;
+      font-size: 10px;
+      text-align: center;
+    }
+
+    @media (max-width: 420px) {
+      .vs-teams,
+      .vs-lineups {
+        grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr);
+        gap: 5px;
+      }
+
+      .vs-team-card {
+        padding: 7px;
+      }
     }
 
     .roulette-title {
@@ -733,11 +923,39 @@
         <button type="button" class="mode-btn active" data-mode="1v1">🏀 1v1</button>
         <button type="button" class="mode-btn" data-mode="5v5">🏀 5v5</button>
         <button type="button" class="mode-btn" data-mode="3-point">🎯 3-POINT SHOOTING</button>
-        <button type="button" class="mode-btn" data-mode="all-star">⭐ ALL-STAR GAMES</button>
+        <button type="button" class="mode-btn" data-mode="all-star">⚔️ VS ALL-STAR</button>
         <button type="button" class="mode-btn" data-mode="rankings">🏆 PLAYER RANKINGS</button>
       </div>
       <div class="mode-status" id="modeStatus">Selected mode: 1v1 • Ready for battle</div>
       <div class="roulette-panel" id="roulettePanel">
+        <div class="vs-arena" id="vsArena">
+          <div class="vs-header">
+            <div class="vs-side-label">PLAYER 1</div>
+            <div class="vs-mark">VS</div>
+            <div class="vs-side-label">OPPONENT</div>
+          </div>
+          <div class="vs-teams">
+            <section class="vs-team-card" aria-labelledby="vsPlayer1Team">
+              <div class="vs-team-name" id="vsPlayer1Team">SPIN FOR TEAM A</div>
+              <button type="button" class="vs-spin" id="vsPlayer1Spin">SPIN TEAM A</button>
+              <div class="vs-position" id="vsPlayer1Position">PG PICK</div>
+              <div class="vs-roster" id="vsPlayer1Roster"></div>
+            </section>
+            <div class="vs-mark" aria-hidden="true">VS</div>
+            <section class="vs-team-card" aria-labelledby="vsOpponentTeam">
+              <div class="vs-team-name" id="vsOpponentTeam">SPIN FOR TEAM B</div>
+              <button type="button" class="vs-spin" id="vsOpponentSpin">SPIN TEAM B</button>
+              <div class="vs-position" id="vsOpponentPosition">PG PICK</div>
+              <div class="vs-roster" id="vsOpponentRoster"></div>
+            </section>
+          </div>
+          <div class="vs-lineups">
+            <div class="vs-lineup" id="vsPlayer1Lineup"></div>
+            <div class="vs-mark" aria-hidden="true">VS</div>
+            <div class="vs-lineup" id="vsOpponentLineup"></div>
+          </div>
+          <div class="vs-status" id="vsStatus">Spin both sides to begin the VS draft.</div>
+        </div>
         <h2 class="roulette-title">🎲 TEAM ROULETTE</h2>
         <div class="roulette-team" id="rouletteTeam">Spin to choose a team</div>
         <button type="button" class="spin-team" id="spinTeamBtn">SPIN TEAM</button>
@@ -1070,6 +1288,27 @@
     const draftSlot = document.getElementById('draftSlot');
     const nextSpinButton = document.getElementById('nextSpinBtn');
     const allStarLineupPlayers = document.getElementById('allStarLineupPlayers');
+    const vsTeamElements = {
+      player1: document.getElementById('vsPlayer1Team'),
+      opponent: document.getElementById('vsOpponentTeam')
+    };
+    const vsSpinButtons = {
+      player1: document.getElementById('vsPlayer1Spin'),
+      opponent: document.getElementById('vsOpponentSpin')
+    };
+    const vsPositionElements = {
+      player1: document.getElementById('vsPlayer1Position'),
+      opponent: document.getElementById('vsOpponentPosition')
+    };
+    const vsRosterElements = {
+      player1: document.getElementById('vsPlayer1Roster'),
+      opponent: document.getElementById('vsOpponentRoster')
+    };
+    const vsLineupElements = {
+      player1: document.getElementById('vsPlayer1Lineup'),
+      opponent: document.getElementById('vsOpponentLineup')
+    };
+    const vsStatus = document.getElementById('vsStatus');
     const teamPool = [
       'Converge FiberXers',
       'Barangay Ginebra',
@@ -1338,17 +1577,22 @@
     let opponentDraftedPlayers = [];
     let spunTeams = [];
     let spinCount = 0;
+    const vsState = {
+      player1: { team: null, lineup: [], spinning: false },
+      opponent: { team: null, lineup: [], spinning: false }
+    };
 
     function setMode(mode) {
       const labels = {
         '1v1': '1v1 • Ready for battle',
         '5v5': '5v5 • Team play selected',
         '3-point': '3-POINT SHOOTING • Practice mode',
-        'all-star': 'ALL-STAR GAMES • Showcase mode',
+        'all-star': 'VS ALL-STAR • Team battle',
         'rankings': 'PLAYER RANKINGS • Leaderboard view'
       };
 
       activeMode = mode;
+      document.body.classList.toggle('vs-mode', mode === 'all-star');
       modeButtons.forEach(button => {
         const isActive = button.dataset.mode === mode;
         button.classList.toggle('active', isActive);
@@ -1358,6 +1602,7 @@
       modeStatus.textContent = 'Selected mode: ' + (labels[mode] || mode);
       const usesSharedPicker = supportedModes.includes(mode);
       roulettePanel.classList.toggle('visible', usesSharedPicker);
+      roulettePanel.classList.toggle('vs-active', mode === 'all-star');
       document.getElementById('legacyLineupPicker').classList.toggle('mode-picker-hidden', usesSharedPicker);
       document.getElementById('legacyPlayerPickerTitle').classList.toggle('mode-picker-hidden', usesSharedPicker);
       document.getElementById('legacyPlayerPicker').classList.toggle('mode-picker-hidden', usesSharedPicker);
@@ -1390,6 +1635,7 @@
         : 'Selected team roster will appear here.';
       resetRosterDraft();
       renderAllStarLineup();
+      resetVsState();
     }
 
     function modeLimit() {
@@ -1412,6 +1658,134 @@
 
       return roster;
     }
+
+    function eligibleVsPlayers(team, position) {
+      return pbaLegendsData.filter(player =>
+        player.position === position &&
+        player.teams.some(teamHistory => teamHistory.name === team) &&
+        player.classification.some(label => ['legend', 'superstar', 'all-star', 'major-all-star'].includes(label))
+      );
+    }
+
+    function nextVsPosition(side) {
+      return allStarPositions[vsState[side].lineup.length];
+    }
+
+    function resetVsState() {
+      ['player1', 'opponent'].forEach(side => {
+        vsState[side] = { team: null, lineup: [], spinning: false };
+        vsTeamElements[side].textContent = side === 'player1' ? 'SPIN FOR TEAM A' : 'SPIN FOR TEAM B';
+        vsSpinButtons[side].disabled = false;
+        vsSpinButtons[side].textContent = side === 'player1' ? 'SPIN TEAM A' : 'SPIN TEAM B';
+        vsPositionElements[side].textContent = 'PG PICK';
+        vsRosterElements[side].innerHTML = '';
+        renderVsLineup(side);
+      });
+      vsStatus.textContent = 'Spin both sides to begin the VS draft.';
+    }
+
+    function renderVsLineup(side) {
+      const lineupElement = vsLineupElements[side];
+      const lineup = vsState[side].lineup;
+      lineupElement.innerHTML = '';
+      allStarPositions.forEach((position, index) => {
+        const slot = document.createElement('div');
+        slot.className = 'vs-lineup-slot' + (lineup[index] ? ' filled' : '');
+        slot.innerHTML = '<strong>' + position + '</strong><span>' + (lineup[index]?.name || '—') + '</span>';
+        lineupElement.appendChild(slot);
+      });
+    }
+
+    function renderVsRoster(side) {
+      const state = vsState[side];
+      const rosterElement = vsRosterElements[side];
+      rosterElement.innerHTML = '';
+
+      if (!state.team || state.lineup.length >= allStarPositions.length) {
+        return;
+      }
+
+      const position = nextVsPosition(side);
+      const roster = eligibleVsPlayers(state.team, position)
+        .filter(player => !state.lineup.some(selectedPlayer => selectedPlayer.name === player.name));
+
+      if (!roster.length) {
+        rosterElement.innerHTML = '<div class="roster-unavailable">No verified ' + position + ' available for this franchise.</div>';
+        return;
+      }
+
+      roster.forEach(player => {
+        const playerRow = document.createElement('div');
+        playerRow.className = 'vs-player';
+        const playerName = document.createElement('span');
+        playerName.className = 'vs-player-name';
+        playerName.textContent = player.name;
+        const selectButton = document.createElement('button');
+        selectButton.type = 'button';
+        selectButton.className = 'vs-player-select';
+        selectButton.textContent = 'PICK';
+        selectButton.addEventListener('click', () => selectVsPlayer(side, player));
+        playerRow.append(playerName, selectButton);
+        rosterElement.appendChild(playerRow);
+      });
+    }
+
+    function selectVsPlayer(side, player) {
+      const state = vsState[side];
+      const position = nextVsPosition(side);
+      if (!state.team || !position || player.position !== position ||
+        state.lineup.some(selectedPlayer => selectedPlayer.name === player.name)) {
+        return;
+      }
+
+      state.lineup.push(player);
+      renderVsLineup(side);
+      if (state.lineup.length < allStarPositions.length) {
+        vsPositionElements[side].textContent = nextVsPosition(side) + ' PICK';
+        renderVsRoster(side);
+      } else {
+        vsPositionElements[side].textContent = 'LINEUP LOCKED';
+        vsRosterElements[side].innerHTML = '<div class="roster-unavailable">Five players locked.</div>';
+      }
+
+      const player1Complete = vsState.player1.lineup.length === allStarPositions.length;
+      const opponentComplete = vsState.opponent.lineup.length === allStarPositions.length;
+      vsStatus.textContent = player1Complete && opponentComplete
+        ? 'VS lineups complete. Both sides are locked.'
+        : (side === 'player1' ? 'Player 1 locked ' : 'Opponent locked ') + position + '.';
+    }
+
+    function startVsTeamSpin(side) {
+      const state = vsState[side];
+      if (activeMode !== 'all-star' || state.spinning || state.team) {
+        return;
+      }
+
+      state.spinning = true;
+      vsSpinButtons[side].disabled = true;
+      vsSpinButtons[side].textContent = 'SPINNING...';
+      vsTeamElements[side].classList.add('spinning');
+      const spinInterval = setInterval(() => {
+        vsTeamElements[side].textContent = historicalTeamPool[Math.floor(Math.random() * historicalTeamPool.length)];
+      }, 100);
+
+      setTimeout(() => {
+        clearInterval(spinInterval);
+        state.team = historicalTeamPool[Math.floor(Math.random() * historicalTeamPool.length)];
+        state.spinning = false;
+        vsTeamElements[side].textContent = state.team;
+        vsTeamElements[side].classList.remove('spinning');
+        vsSpinButtons[side].textContent = 'TEAM LOCKED';
+        vsPositionElements[side].textContent = 'PG PICK';
+        renderVsRoster(side);
+        vsStatus.textContent = vsState.player1.team && vsState.opponent.team
+          ? 'Both franchises selected. Draft one position at a time on each side.'
+          : 'Spin the other side to reveal its independent franchise pool.';
+      }, 1200);
+    }
+
+    vsSpinButtons.player1.addEventListener('click', () => startVsTeamSpin('player1'));
+    vsSpinButtons.opponent.addEventListener('click', () => startVsTeamSpin('opponent'));
 
     function renderAllStarLineup() {
       allStarLineupPlayers.innerHTML = '';
