@@ -431,6 +431,22 @@
       color: #ddd;
     }
 
+    .roster-actions {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 6px;
+    }
+
+    .roster-actions .roster-select {
+      padding: 8px 7px;
+      font-size: 10px;
+    }
+
+    .mode-picker-hidden,
+    .players.mode-picker-hidden {
+      display: none;
+    }
+
     .draft-slot {
       margin-top: 12px;
       padding: 11px;
@@ -729,6 +745,7 @@
         <div class="team-roster" id="teamRoster">
           <h3 id="rosterTitle">TEAM ROSTER</h3>
           <div class="roster-list" id="rosterPlayers"></div>
+          <div class="roster-list" id="opponentRosterPlayers"></div>
           <div class="draft-slot" id="draftSlot">
             <strong>DRAFT SLOT</strong>
             No player selected
@@ -747,7 +764,7 @@
       <div class="league">🇵🇭 PBA TEAM</div>
     </div>
 
-    <div class="lineup">
+    <div class="lineup mode-picker-hidden" id="legacyLineupPicker">
 
       <div class="lineup-title">
         👥 YOUR 5-MAN LINEUP
@@ -784,11 +801,11 @@
 
     </div>
 
-    <div class="title">
+    <div class="title mode-picker-hidden" id="legacyPlayerPickerTitle">
       👤 CHOOSE YOUR PLAYER
     </div>
 
-    <div class="players">
+    <div class="players mode-picker-hidden" id="legacyPlayerPicker">
 
       <div class="player" data-name="Calvin Abueva">
         <div class="top">
@@ -1049,6 +1066,7 @@
     const teamRoster = document.getElementById('teamRoster');
     const rosterTitle = document.getElementById('rosterTitle');
     const rosterPlayers = document.getElementById('rosterPlayers');
+    const opponentRosterPlayers = document.getElementById('opponentRosterPlayers');
     const draftSlot = document.getElementById('draftSlot');
     const nextSpinButton = document.getElementById('nextSpinBtn');
     const allStarLineupPlayers = document.getElementById('allStarLineupPlayers');
@@ -1073,7 +1091,163 @@
       'Perpetual',
       'San Sebastian',
       'Arellano',
-      'EAC'
+      'EAC',
+      'PBA Legends'
+    ];
+    const pbaLegendsData = [
+      {
+        name: 'Robert Jaworski', position: 'PG', era: '1970s-1990s', classification: ['legend', 'all-star'],
+        careerStart: 1975, careerEnd: 1997,
+        teams: [{ name: 'Toyota', from: 1975, to: 1983 }, { name: 'Ginebra San Miguel', from: 1984, to: 1997 }],
+        verifiedFacts: ['PBA Hall of Fame inductee', '13-time PBA All-Star', '1978 PBA MVP'],
+        sources: ['https://en.wikipedia.org/wiki/Robert_Jaworski', 'https://www.pba.ph/']
+      },
+      {
+        name: 'Hector Calma', position: 'PG', era: '1980s-1990s', classification: ['legend', 'all-star'],
+        careerStart: 1982, careerEnd: 1996,
+        teams: [{ name: 'Crispa', from: 1982, to: 1984 }, { name: 'Tanduay', from: 1985, to: 1987 }, { name: 'Formula Shell', from: 1988, to: 1996 }],
+        verifiedFacts: ['PBA Hall of Fame inductee', '1989 PBA All-Star Game MVP'],
+        sources: ['https://en.wikipedia.org/wiki/Hector_Calma', 'https://www.pba.ph/'],
+        reviewRequired: 'Verify the Formula Shell end year against the official PBA player register.'
+      },
+      {
+        name: 'Johnny Abarrientos', position: 'PG', era: '1990s-2000s', classification: ['legend', 'all-star'],
+        careerStart: 1993, careerEnd: 2009,
+        teams: [{ name: 'Alaska', from: 1993, to: 2002 }, { name: 'FedEx', from: 2003, to: 2004 }, { name: 'Sta. Lucia Realtors', from: 2004, to: 2009 }],
+        verifiedFacts: ['1996 PBA MVP', 'PBA Hall of Fame inductee', '1996 PBA All-Star Game MVP'],
+        sources: ['https://en.wikipedia.org/wiki/Johnny_Abarrientos', 'https://www.pba.ph/'],
+        reviewRequired: 'Confirm the FedEx and Sta. Lucia season boundary from official transaction records.'
+      },
+      {
+        name: 'Jimmy Alapag', position: 'PG', era: '2000s-2010s', classification: ['legend', 'all-star'],
+        careerStart: 2003, careerEnd: 2016,
+        teams: [{ name: 'Talk N Text', from: 2003, to: 2015 }, { name: 'Meralco Bolts', from: 2015, to: 2016 }],
+        verifiedFacts: ['2011 PBA MVP', '2013 FIBA Asia Championship Mythical Five', 'PBA Hall of Fame inductee'],
+        sources: ['https://en.wikipedia.org/wiki/Jimmy_Alapag', 'https://www.pba.ph/']
+      },
+      {
+        name: 'Atoy Co', position: 'SG', era: '1970s-1980s', classification: ['legend', 'all-star'],
+        careerStart: 1975, careerEnd: 1987,
+        teams: [{ name: 'Toyota', from: 1975, to: 1983 }, { name: 'Manila Beer', from: 1984, to: 1985 }, { name: 'Shell', from: 1986, to: 1987 }],
+        verifiedFacts: ['PBA Hall of Fame inductee', 'first player to reach 5,000 PBA points'],
+        sources: ['https://en.wikipedia.org/wiki/Atoy_Co', 'https://www.pba.ph/'],
+        reviewRequired: 'Confirm the Manila Beer and Shell season boundaries against PBA records.'
+      },
+      {
+        name: 'Allan Caidic', position: 'SG', era: '1980s-1990s', classification: ['legend', 'all-star'],
+        careerStart: 1987, careerEnd: 1999,
+        teams: [{ name: 'Great Taste', from: 1987, to: 1993 }, { name: 'Sunkist', from: 1993, to: 1995 }, { name: 'Purefoods', from: 1996, to: 1999 }],
+        verifiedFacts: ['1990 PBA MVP', 'PBA Hall of Fame inductee', 'PBA all-time three-point scoring leader at retirement'],
+        sources: ['https://en.wikipedia.org/wiki/Allan_Caidic', 'https://www.pba.ph/'],
+        reviewRequired: 'Verify the 1995-1996 franchise transition and final playing season.'
+      },
+      {
+        name: 'Samboy Lim', position: 'SG', era: '1980s-1990s', classification: ['legend', 'all-star'],
+        careerStart: 1986, careerEnd: 1997,
+        teams: [{ name: 'San Miguel Beermen', from: 1986, to: 1997 }],
+        verifiedFacts: ['PBA Hall of Fame inductee', '1989 PBA All-Star Game MVP'],
+        sources: ['https://en.wikipedia.org/wiki/Samboy_Lim', 'https://www.pba.ph/']
+      },
+      {
+        name: 'James Yap', position: 'SG', era: '2000s-present', classification: ['legend', 'all-star'],
+        careerStart: 2004, careerEnd: 'present',
+        teams: [{ name: 'Purefoods / B-Meg / San Mig Coffee', from: 2004, to: 2016 }, { name: 'Rain or Shine', from: 2016, to: 'present' }],
+        verifiedFacts: ['2006 and 2010 PBA MVP', '2014 PBA Finals MVP', '10-time PBA All-Star'],
+        sources: ['https://en.wikipedia.org/wiki/James_Yap', 'https://www.pba.ph/'],
+        reviewRequired: 'Confirm current active status and Rain or Shine end year before publishing a final historical roster.'
+      },
+      {
+        name: 'Francis Arnaiz', position: 'SG', era: '1970s-1980s', classification: ['legend', 'all-star'],
+        careerStart: 1975, careerEnd: 1985,
+        teams: [{ name: 'Toyota', from: 1975, to: 1983 }, { name: 'Ginebra San Miguel', from: 1984, to: 1985 }],
+        verifiedFacts: ['PBA Hall of Fame inductee', '1979 PBA MVP'],
+        sources: ['https://en.wikipedia.org/wiki/Francis_Arnaiz', 'https://www.pba.ph/']
+      },
+      {
+        name: 'Ricardo Brown', position: 'SG', era: '1980s', classification: ['legend', 'all-star'],
+        careerStart: 1983, careerEnd: 1990,
+        teams: [{ name: 'Great Taste', from: 1983, to: 1987 }, { name: 'Alaska', from: 1988, to: 1990 }],
+        verifiedFacts: ['1985 PBA MVP', 'PBA Hall of Fame inductee', 'five-time PBA All-Star'],
+        sources: ['https://en.wikipedia.org/wiki/Ricardo_Brown_(basketball)', 'https://www.pba.ph/']
+      },
+      {
+        name: 'Jojo Lastimosa', position: 'SF', era: '1990s-2000s', classification: ['legend', 'all-star'],
+        careerStart: 1990, careerEnd: 2003,
+        teams: [{ name: 'Alaska', from: 1990, to: 2002 }, { name: 'Talk N Text', from: 2002, to: 2003 }],
+        verifiedFacts: ['PBA Hall of Fame inductee', '1998 PBA All-Star Game MVP'],
+        sources: ['https://en.wikipedia.org/wiki/Jojo_Lastimosa', 'https://www.pba.ph/'],
+        reviewRequired: 'Confirm the final Talk N Text season and franchise name used in the official register.'
+      },
+      {
+        name: 'Alvin Patrimonio', position: 'PF', era: '1980s-2000s', classification: ['legend', 'all-star'],
+        careerStart: 1988, careerEnd: 2004,
+        teams: [{ name: 'Purefoods', from: 1988, to: 2004 }],
+        verifiedFacts: ['1991, 1993, 1994 and 1997 PBA MVP', 'PBA Hall of Fame inductee', '12-time PBA All-Star'],
+        sources: ['https://en.wikipedia.org/wiki/Alvin_Patrimonio', 'https://www.pba.ph/']
+      },
+      {
+        name: 'Philip Cezar', position: 'PF', era: '1970s-1980s', classification: ['legend', 'all-star'],
+        careerStart: 1975, careerEnd: 1988,
+        teams: [{ name: 'Toyota', from: 1975, to: 1983 }, { name: 'Manila Beer', from: 1984, to: 1984 }, { name: 'Shell', from: 1985, to: 1988 }],
+        verifiedFacts: ['1980 PBA MVP', 'PBA Hall of Fame inductee'],
+        sources: ['https://en.wikipedia.org/wiki/Philip_Cezar', 'https://www.pba.ph/'],
+        reviewRequired: 'Confirm the Manila Beer and Shell season boundaries against PBA records.'
+      },
+      {
+        name: 'Benjie Paras', position: 'C', era: '1980s-2000s', classification: ['legend', 'all-star'],
+        careerStart: 1989, careerEnd: 2003,
+        teams: [{ name: 'Shell', from: 1989, to: 1999 }, { name: 'San Miguel', from: 2000, to: 2003 }],
+        verifiedFacts: ['1989 Rookie of the Year and MVP', '1999 PBA MVP', 'PBA Hall of Fame inductee'],
+        sources: ['https://en.wikipedia.org/wiki/Benjie_Paras', 'https://www.pba.ph/']
+      },
+      {
+        name: 'Arwind Santos', position: 'PF', era: '2000s-2020s', classification: ['legend', 'all-star'],
+        careerStart: 2006, careerEnd: 2024,
+        teams: [{ name: 'Air21', from: 2006, to: 2008 }, { name: 'San Miguel / Petron', from: 2009, to: 2018 }, { name: 'NorthPort', from: 2018, to: 2021 }, { name: 'Magnolia', from: 2021, to: 2024 }],
+        verifiedFacts: ['2013 PBA MVP', '2013 Defensive Player of the Year', '2013 PBA Finals MVP'],
+        sources: ['https://en.wikipedia.org/wiki/Arwind_Santos', 'https://www.pba.ph/'],
+        reviewRequired: 'Confirm the 2024 retirement date and exact franchise branding for each season.'
+      },
+      {
+        name: 'Danny Ildefonso', position: 'PF', era: '1990s-2010s', classification: ['legend', 'all-star'],
+        careerStart: 1998, careerEnd: 2016,
+        teams: [{ name: 'San Miguel / Petron', from: 1998, to: 2014 }, { name: 'Meralco', from: 2014, to: 2015 }, { name: 'Talk N Text', from: 2015, to: 2016 }],
+        verifiedFacts: ['2000 and 2001 PBA MVP', 'PBA Hall of Fame inductee', '2000 Rookie of the Year'],
+        sources: ['https://en.wikipedia.org/wiki/Danny_Ildefonso', 'https://www.pba.ph/'],
+        reviewRequired: 'Confirm the Petron, Meralco, and Talk N Text season boundaries from official records.'
+      },
+      {
+        name: 'Ramon Fernandez', position: 'C', era: '1970s-1990s', classification: ['legend', 'all-star'],
+        careerStart: 1975, careerEnd: 1994,
+        teams: [{ name: 'Toyota', from: 1975, to: 1983 }, { name: 'Beer Hausen', from: 1984, to: 1984 }, { name: 'Tanduay', from: 1985, to: 1987 }, { name: 'Purefoods', from: 1988, to: 1994 }],
+        verifiedFacts: ['1982, 1984, 1986 and 1988 PBA MVP', 'PBA Hall of Fame inductee', 'first PBA player to reach 10,000 points'],
+        sources: ['https://en.wikipedia.org/wiki/Ramon_Fernandez', 'https://www.pba.ph/'],
+        reviewRequired: 'Confirm the 1984 Beer Hausen franchise name and season boundary.'
+      },
+      {
+        name: 'Abet Guidaben', position: 'C', era: '1970s-1990s', classification: ['legend', 'all-star'],
+        careerStart: 1975, careerEnd: 1991,
+        teams: [{ name: 'Crispa', from: 1975, to: 1984 }, { name: 'Manila Beer', from: 1984, to: 1985 }, { name: 'Tanduay', from: 1985, to: 1987 }, { name: 'Purefoods', from: 1988, to: 1991 }],
+        verifiedFacts: ['1983 and 1987 PBA MVP', 'PBA Hall of Fame inductee', 'two-time PBA All-Star Game MVP'],
+        sources: ['https://en.wikipedia.org/wiki/Abet_Guidaben', 'https://www.pba.ph/'],
+        reviewRequired: 'Confirm the 1984-1985 franchise overlap and final Purefoods season.'
+      },
+      {
+        name: 'Jerry Codiñera', position: 'C', era: '1980s-2000s', classification: ['legend', 'all-star'],
+        careerStart: 1988, careerEnd: 2003,
+        teams: [{ name: 'Purefoods', from: 1988, to: 1999 }, { name: 'Alaska', from: 2000, to: 2000 }, { name: 'Mobiline', from: 2000, to: 2003 }],
+        verifiedFacts: ['1994 PBA Finals MVP', 'PBA Hall of Fame inductee', '1998 PBA Defensive Player of the Year'],
+        sources: ['https://en.wikipedia.org/wiki/Jerry_Codi%C3%B1era', 'https://www.pba.ph/'],
+        reviewRequired: 'Confirm the Alaska-Mobiline transition month and season assignment.'
+      },
+      {
+        name: 'June Mar Fajardo', position: 'C', era: '2010s-present', classification: ['legend', 'all-star'],
+        careerStart: 2012, careerEnd: 'present',
+        teams: [{ name: 'San Miguel Beermen', from: 2012, to: 'present' }],
+        verifiedFacts: ['six-time PBA MVP through 2024', '2014 Rookie of the Year', 'PBA Hall of Fame inductee'],
+        sources: ['https://en.wikipedia.org/wiki/June_Mar_Fajardo', 'https://www.pba.ph/'],
+        reviewRequired: 'Update the award count and active status when the official 2026 PBA record is available.'
+      }
     ];
     const teamRosterData = {
       'Converge FiberXers': [
@@ -1145,11 +1319,23 @@
         { name: 'B. J. Johnson', position: 'SF' },
         { name: 'Jason Perkins', position: 'PF' },
         { name: 'Rafi Reavis', position: 'C' }
-      ]
+      ],
+      'PBA Legends': pbaLegendsData.map(player => ({
+        name: player.name,
+        position: player.position,
+        legend: true
+      }))
     };
 
+    const historicalTeamPool = [...new Set(pbaLegendsData.flatMap(player =>
+      player.teams.map(team => team.name)
+    ))];
+    const allStarPositions = ['PG', 'SG', 'SF', 'PF', 'C'];
+    const supportedModes = ['1v1', '5v5', '3-point', 'all-star'];
+    let activeMode = '1v1';
     let selectedRosterPlayer = null;
     let draftedPlayers = [];
+    let opponentDraftedPlayers = [];
     let spunTeams = [];
     let spinCount = 0;
 
@@ -1162,6 +1348,7 @@
         'rankings': 'PLAYER RANKINGS • Leaderboard view'
       };
 
+      activeMode = mode;
       modeButtons.forEach(button => {
         const isActive = button.dataset.mode === mode;
         button.classList.toggle('active', isActive);
@@ -1169,7 +1356,12 @@
       });
 
       modeStatus.textContent = 'Selected mode: ' + (labels[mode] || mode);
-      roulettePanel.classList.toggle('visible', mode === 'all-star');
+      const usesSharedPicker = supportedModes.includes(mode);
+      roulettePanel.classList.toggle('visible', usesSharedPicker);
+      document.getElementById('legacyLineupPicker').classList.toggle('mode-picker-hidden', usesSharedPicker);
+      document.getElementById('legacyPlayerPickerTitle').classList.toggle('mode-picker-hidden', usesSharedPicker);
+      document.getElementById('legacyPlayerPicker').classList.toggle('mode-picker-hidden', usesSharedPicker);
+      resetModeState();
     }
 
     modeButtons.forEach(button => {
@@ -1179,10 +1371,46 @@
     function resetRosterDraft() {
       selectedRosterPlayer = null;
       rosterPlayers.innerHTML = '';
+      opponentRosterPlayers.innerHTML = '';
       draftSlot.innerHTML = '<strong>DRAFT SLOT</strong>No player selected';
       nextSpinButton.classList.remove('visible');
       nextSpinButton.disabled = false;
       nextSpinButton.textContent = 'NEXT SPIN';
+    }
+
+    function resetModeState() {
+      draftedPlayers = [];
+      opponentDraftedPlayers = [];
+      spunTeams = [];
+      spinCount = 0;
+      rouletteTeam.textContent = 'Spin to choose a historical team';
+      teamRoster.classList.remove('visible');
+      rosterPreview.textContent = activeMode === 'all-star'
+        ? 'Each spin selects PG, SG, SF, PF, then C.'
+        : 'Selected team roster will appear here.';
+      resetRosterDraft();
+      renderAllStarLineup();
+    }
+
+    function modeLimit() {
+      return activeMode === '5v5' || activeMode === 'all-star' ? 5 : 1;
+    }
+
+    function eligibleLegendsForTeam(team) {
+      let roster = pbaLegendsData.filter(player =>
+        player.teams.some(teamHistory => teamHistory.name === team) &&
+        player.classification.some(label => ['legend', 'superstar', 'all-star', 'major-all-star'].includes(label))
+      );
+
+      if (activeMode === 'all-star') {
+        roster = roster.filter(player => player.position === allStarPositions[spinCount - 1]);
+      }
+
+      if (activeMode === '3-point') {
+        roster = roster.filter(player => player.position === 'SG');
+      }
+
+      return roster;
     }
 
     function renderAllStarLineup() {
@@ -1191,32 +1419,36 @@
         const lineupPlayer = document.createElement('div');
         lineupPlayer.className = 'all-star-lineup-player';
         lineupPlayer.innerHTML =
-          'PLAYER ' + (index + 1) + '<br>' + player.name +
+          'YOU ' + (index + 1) + '<br>' + player.name +
+          '<small>' + player.position + '</small>';
+        allStarLineupPlayers.appendChild(lineupPlayer);
+      });
+      opponentDraftedPlayers.forEach((player, index) => {
+        const lineupPlayer = document.createElement('div');
+        lineupPlayer.className = 'all-star-lineup-player';
+        lineupPlayer.innerHTML =
+          'OPPONENT ' + (index + 1) + '<br>' + player.name +
           '<small>' + player.position + '</small>';
         allStarLineupPlayers.appendChild(lineupPlayer);
       });
     }
 
-    function selectRosterPlayer(button, player) {
-      if (selectedRosterPlayer || draftedPlayers.some(draftedPlayer => draftedPlayer.name === player.name)) {
+    function selectRosterPlayer(button, player, side) {
+      const selections = side === 'opponent' ? opponentDraftedPlayers : draftedPlayers;
+      if (selections.length >= modeLimit() || selections.some(selectedPlayer => selectedPlayer.name === player.name)) {
         return;
       }
 
+      selections.push(player);
       selectedRosterPlayer = player;
-      draftedPlayers.push(player);
-      rosterPlayers.querySelectorAll('.roster-select').forEach(rosterButton => {
-        rosterButton.disabled = true;
-      });
       button.textContent = '✓ SELECTED';
+      button.disabled = true;
       draftSlot.innerHTML =
-        '<strong>DRAFT SLOT</strong>' + player.name + ' (' + player.position + ')';
-      rosterPreview.textContent = player.name + ' selected. Ready for the next spin.';
+        '<strong>SELECTIONS</strong>You: ' + draftedPlayers.length + '/' + modeLimit() +
+        ' | Opponent: ' + opponentDraftedPlayers.length + '/' + modeLimit();
+      rosterPreview.textContent = player.name + ' selected for ' + (side === 'opponent' ? 'the opponent.' : 'you.');
       renderAllStarLineup();
-      if (spinCount >= 2) {
-        nextSpinButton.classList.add('visible');
-        nextSpinButton.disabled = true;
-        nextSpinButton.textContent = 'NEXT SPIN • COMING SOON';
-      } else {
+      if (activeMode === 'all-star' && draftedPlayers.length >= spinCount && opponentDraftedPlayers.length >= spinCount) {
         nextSpinButton.classList.add('visible');
         nextSpinButton.disabled = false;
         nextSpinButton.textContent = 'NEXT SPIN';
@@ -1224,48 +1456,64 @@
     }
 
     function renderTeamRoster(team) {
-      const roster = teamRosterData[team];
+      const roster = eligibleLegendsForTeam(team);
 
       resetRosterDraft();
       teamRoster.classList.add('visible');
-      rosterTitle.textContent = team + ' ROSTER';
+      rosterTitle.textContent = team + ' • ' + activeMode.toUpperCase() + ' ROSTER';
 
-      if (!roster) {
-        rosterPreview.textContent = 'No verified roster data available for this team yet.';
+      if (!roster.length) {
+        rosterPreview.textContent = 'No eligible verified legend is available for this team and mode.';
         rosterPlayers.innerHTML =
-          '<div class="roster-unavailable">Roster data will be added when verified.</div>';
+          '<div class="roster-unavailable">No eligible player found.</div>';
         return;
       }
 
-      rosterPreview.textContent = 'Select one player for your draft slot.';
+      rosterPreview.textContent = activeMode === 'all-star'
+        ? 'Select the ' + allStarPositions[spinCount - 1] + ' player for you and your opponent.'
+        : 'Select a player for you and your opponent.';
       roster.forEach(player => {
-        const playerRow = document.createElement('div');
-        playerRow.className = 'roster-player';
-
-        const playerInfo = document.createElement('div');
-        playerInfo.innerHTML =
-          '<span class="roster-player-name">' + player.name + '</span>' +
-          '<span class="roster-player-position">' + player.position + '</span>';
-
-        const playerButton = document.createElement('button');
-        playerButton.type = 'button';
-        playerButton.className = 'roster-select';
-        playerButton.textContent = 'SELECT PLAYER';
-        if (draftedPlayers.some(draftedPlayer => draftedPlayer.name === player.name)) {
-          playerButton.disabled = true;
-          playerButton.textContent = 'ALREADY DRAFTED';
-        }
-        playerButton.addEventListener('click', () => {
-          selectRosterPlayer(playerButton, player);
+        ['you', 'opponent'].forEach(side => {
+          const target = side === 'you' ? rosterPlayers : opponentRosterPlayers;
+          if (side === 'you') {
+            const playerRow = document.createElement('div');
+            playerRow.className = 'roster-player';
+            const playerInfo = document.createElement('div');
+            playerInfo.innerHTML = '<span class="roster-player-name">' + player.name + '</span>' +
+              '<span class="roster-player-position">' + player.position + '</span>';
+            const actions = document.createElement('div');
+            actions.className = 'roster-actions';
+            const playerButton = document.createElement('button');
+            playerButton.type = 'button';
+            playerButton.className = 'roster-select';
+            playerButton.textContent = 'YOU';
+            playerButton.disabled = draftedPlayers.some(selectedPlayer => selectedPlayer.name === player.name);
+            playerButton.addEventListener('click', () => selectRosterPlayer(playerButton, player, 'you'));
+            actions.appendChild(playerButton);
+            playerRow.append(playerInfo, actions);
+            target.appendChild(playerRow);
+          } else {
+            const playerRow = document.createElement('div');
+            playerRow.className = 'roster-player';
+            const playerInfo = document.createElement('div');
+            playerInfo.innerHTML = '<span class="roster-player-name">' + player.name + '</span>' +
+              '<span class="roster-player-position">' + player.position + '</span>';
+            const playerButton = document.createElement('button');
+            playerButton.type = 'button';
+            playerButton.className = 'roster-select';
+            playerButton.textContent = 'OPPONENT';
+            playerButton.disabled = opponentDraftedPlayers.some(selectedPlayer => selectedPlayer.name === player.name);
+            playerButton.addEventListener('click', () => selectRosterPlayer(playerButton, player, 'opponent'));
+            playerRow.append(playerInfo, playerButton);
+            target.appendChild(playerRow);
+          }
         });
-
-        playerRow.append(playerInfo, playerButton);
-        rosterPlayers.appendChild(playerRow);
       });
     }
 
     function startTeamSpin() {
-      if (spinCount >= 2) {
+      const maxSpins = activeMode === 'all-star' ? 5 : 1;
+      if (spinCount >= maxSpins) {
         return;
       }
 
@@ -1278,15 +1526,15 @@
       rosterPreview.textContent = 'Selecting a team...';
 
       const spinInterval = setInterval(() => {
-        const cyclingTeam = teamPool[Math.floor(Math.random() * teamPool.length)];
+        const cyclingTeam = historicalTeamPool[Math.floor(Math.random() * historicalTeamPool.length)];
         rouletteTeam.textContent = cyclingTeam;
       }, 100);
 
       setTimeout(() => {
         clearInterval(spinInterval);
 
-        const availableTeams = teamPool.filter(team => !spunTeams.includes(team));
-        const spinPool = availableTeams.length ? availableTeams : teamPool;
+        const availableTeams = historicalTeamPool.filter(team => !spunTeams.includes(team));
+        const spinPool = availableTeams.length ? availableTeams : historicalTeamPool;
         const selectedTeam = spinPool[Math.floor(Math.random() * spinPool.length)];
         spunTeams.push(selectedTeam);
         rouletteTeam.textContent = selectedTeam;
@@ -1298,7 +1546,7 @@
     }
 
     function startNextTeamSpin() {
-      if (spinCount !== 1 || draftedPlayers.length !== 1 || !selectedRosterPlayer) {
+      if (activeMode !== 'all-star' || draftedPlayers.length < spinCount || opponentDraftedPlayers.length < spinCount) {
         return;
       }
 
