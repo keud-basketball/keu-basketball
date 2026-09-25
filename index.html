@@ -548,6 +548,100 @@
       justify-self: center;
     }
 
+    @media (orientation: landscape) {
+      body.vs-mode .game {
+        padding: 10px;
+      }
+
+      body.vs-mode .mode-menu {
+        margin-top: 8px;
+        padding: 8px;
+      }
+
+      body.vs-mode .vs-arena {
+        margin-top: 6px;
+        padding: 8px;
+        border-radius: 12px;
+      }
+
+      body.vs-mode .vs-header {
+        gap: 6px;
+        margin-bottom: 6px;
+      }
+
+      body.vs-mode .vs-side-label {
+        font-size: 9px;
+      }
+
+      body.vs-mode .vs-mark {
+        font-size: 18px;
+      }
+
+      body.vs-mode .vs-teams,
+      body.vs-mode .vs-lineups {
+        gap: 6px;
+      }
+
+      body.vs-mode .vs-team-card {
+        padding: 6px;
+        border-radius: 10px;
+      }
+
+      body.vs-mode .vs-team-name {
+        min-height: 28px;
+        padding: 4px;
+        font-size: 10px;
+      }
+
+      body.vs-mode .vs-spin {
+        margin-top: 4px;
+        padding: 6px 4px;
+        font-size: 9px;
+      }
+
+      body.vs-mode .vs-position {
+        margin: 5px 0 4px;
+        font-size: 9px;
+      }
+
+      body.vs-mode .vs-roster {
+        gap: 3px;
+      }
+
+      body.vs-mode .vs-player {
+        gap: 3px;
+        padding: 4px;
+        font-size: 9px;
+      }
+
+      body.vs-mode .vs-player-select {
+        padding: 4px;
+        font-size: 8px;
+      }
+
+      body.vs-mode .vs-lineups {
+        margin-top: 6px;
+      }
+
+      body.vs-mode .vs-lineup-slot {
+        grid-template-columns: 18px minmax(0, 1fr);
+        gap: 3px;
+        min-height: 22px;
+        padding: 3px;
+        font-size: 8px;
+      }
+
+      body.vs-mode .vs-lineup-slot strong {
+        font-size: 8px;
+      }
+
+      body.vs-mode .vs-status {
+        min-height: 20px;
+        margin-top: 5px;
+        font-size: 9px;
+      }
+    }
+
     .roulette-title {
       margin: 0;
       font-size: 15px;
@@ -1636,6 +1730,7 @@
     };
 
     function setMode(mode) {
+      const previousMode = activeMode;
       const labels = {
         '1v1': '1v1 • Ready for battle',
         '5v5': '5v5 • Team play selected',
@@ -1646,6 +1741,11 @@
 
       activeMode = mode;
       document.body.classList.toggle('vs-mode', mode === 'all-star');
+      if (mode === 'all-star') {
+        startBasketballMatch();
+      } else if (previousMode === 'all-star') {
+        endBasketballMatch();
+      }
       modeButtons.forEach(button => {
         const isActive = button.dataset.mode === mode;
         button.classList.toggle('active', isActive);
